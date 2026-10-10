@@ -30,7 +30,8 @@ Fonts load from Google Fonts when online; offline the app falls back to system f
 
 Validation results (131,443 attempts): PR-AUC 0.55 (base rate 0.39, "2nd attempt failed" rule 0.43); at a 35 %
 threshold it catches 70 % of failed attempts with 48 % precision; predicted risks are well calibrated. The test
-split has not been used yet (see notebook 02, `EVALUATE_TEST`).
+split has not been used yet (see notebook 02, `EVALUATE_TEST`). After the one-time test evaluation
+(decision D-17) *Model & data* shows the test numbers, baselines and segments; calibration stays on validation.
 
 ## Limits
 

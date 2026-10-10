@@ -57,7 +57,7 @@ these analyses.
 
 ## Current results (validation, model `monotone-logreg-v1`, snapshot 2026-10-10)
 
-From `notebooks/02_model_training.ipynb`; the test split is still unused (decision D-15).
+From `notebooks/02_model_training.ipynb`; the test split is still unused (decisions D-15, D-17).
 
 | Approach | Precision | Recall | PR-AUC |
 |---|---:|---:|---:|
@@ -76,6 +76,17 @@ women 0.49 (women's 3rd attempts fail less often: 34 % vs 41 %), Sub-Juniors 0.5
 Multi-ply 0.91. Mx (16 validation rows) and Unlimited are too small to judge. With equal precision and different
 base rates, equal recall would need group-specific thresholds; discuss this trade-off in report 6.2 rather than
 silently adding `sex` back as a threshold input.
+
+## Final test evaluation (run once, decision D-17)
+
+1. Freeze: the committed `app/model/model.json` is the model (monotone logistic regression fitted on train) with its
+   validation threshold 0.3541 (0.35 in the report). Do not change features, model or threshold afterwards.
+2. Use the data snapshot the model was trained on (`opl_commit` in the model card) and the exported `split` column –
+   no re-split, no refit on validation or test.
+3. Set `EVALUATE_TEST = True` in notebook 02 and run it. Section 6 refuses to run for any other model, then prints
+   precision, recall and PR-AUC on test, the baselines B1–B3 (Table 3) and the segment table (Table 4).
+4. The date of the run (`metrics.test.evaluated_utc`) is the date for the report. Report the numbers as they are,
+   also if they are worse than on validation.
 
 ## Reporting checklist
 

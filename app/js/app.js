@@ -307,6 +307,9 @@
   // ---------- model & data ----------
   function renderModelCard() {
     const d = MODEL.dataset, v = MODEL.metrics.validation, t = MODEL.metrics.test;
+    // After the one-time test evaluation (notebook 02, section 6) the tables show the test split.
+    const onTest = Boolean(t && MODEL.baselines_test && MODEL.segments_test);
+    const splitName = onTest ? "test split" : "validation split";
     const n = (x) => Number(x).toLocaleString("en-US");
     const f2 = (x) => (x === null || x === undefined ? "–" : Number(x).toFixed(2));
     $("model-lede").textContent = `Logistic regression trained on ${n(d.train_records)} third deadlift attempts by ` +
@@ -315,9 +318,10 @@
     $("metrics-note").textContent = `Validation split: ${n(v.n)} attempts, ${pct(v.base_rate)} of them failed. ` +
       `Warning at ${pct(v.threshold)} or more: the model catches ${pct(v.recall)} of failed attempts, and ` +
       `${pct(v.precision)} of its warnings are failed attempts. ` +
-      (t ? `Test split (${n(t.n)} attempts): precision ${f2(t.precision)}, recall ${f2(t.recall)}, PR-AUC ${f2(t.pr_auc)}.`
+      (t ? `Test split (${n(t.n)} attempts, evaluated once on ${t.evaluated_utc.slice(0, 10)} with the frozen model): ` +
+          `precision ${f2(t.precision)}, recall ${f2(t.recall)}, PR-AUC ${f2(t.pr_auc)}. The table below shows the ${splitName}.`
          : "The test split is kept for the final evaluation and has not been used yet.");
-    const rows = Object.entries(MODEL.baselines_validation).map(([name, m]) =>
+    const rows = Object.entries(onTest ? MODEL.baselines_test : MODEL.baselines_validation).map(([name, m]) =>
       `<tr class="${name.startsWith("Model") ? "is-model" : ""}"><td>${esc(name)}</td><td class="num">${f2(m.precision)}</td>` +
       `<td class="num">${f2(m.recall)}</td><td class="num">${f2(m.pr_auc)}</td></tr>`);
     $("metrics-table").innerHTML = '<thead><tr><th scope="col">Approach</th><th class="num" scope="col">Precision</th>' +
@@ -329,12 +333,12 @@
 
     const segName = { sex: "Sex", age_class_group: "Age group", equipment: "Equipment" };
     const valName = { M: "Men", F: "Women" };
-    $("segments-note").textContent = `Precision and recall at the ${pct(v.threshold)} warning threshold, validation split. ` +
+    $("segments-note").textContent = `Precision and recall at the ${pct(v.threshold)} warning threshold, ${splitName}. ` +
       "Sex is used only for this check and is never an input. \"Too small\": fewer than 100 failed attempts. " +
       "\"Check\": recall differs from the overall value by more than 10 points.";
     $("segments-table").innerHTML = '<thead><tr><th scope="col">Group</th><th scope="col">Segment</th><th class="num" scope="col">Attempts</th>' +
       '<th class="num" scope="col">Failed</th><th class="num" scope="col">Precision</th><th class="num" scope="col">Recall</th>' +
-      `<th scope="col">Note</th></tr></thead><tbody>${MODEL.segments_validation.map((r) =>
+      `<th scope="col">Note</th></tr></thead><tbody>${(onTest ? MODEL.segments_test : MODEL.segments_validation).map((r) =>
         `<tr><td>${esc(segName[r.segment] || r.segment)}</td><td>${esc(valName[r.value] || r.value)}</td><td class="num">${n(r.n)}</td>` +
         `<td class="num">${n(r.failed)}</td><td class="num">${f2(r.precision)}</td><td class="num">${f2(r.recall)}</td>` +
         `<td>${r.flag === "too small" ? pill("neutral", "close", "Too small") : r.flag === "check" ? pill("warn", "warn", `Check (${r.recall_gap_pp > 0 ? "+" : ""}${r.recall_gap_pp} pts)`) : ""}</td></tr>`).join("")}</tbody>`;

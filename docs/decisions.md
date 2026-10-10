@@ -79,3 +79,12 @@ model. → Notebook 02 has `EVALUATE_TEST = False`; the app shows validation met
 Requested by the project owners: a simple HTML and JavaScript application in its own folder. → `app/` runs without a
 server or build step (also from disk); the model is a logistic regression exported as JSON and evaluated in the
 browser; Node tests check it against Python reference probabilities.
+
+### D-17 One-time test evaluation guarded by the frozen model card (2026-10-10)
+The test split may be used once, with the model frozen after validation (spec 06, rule 4); a re-run of notebook 02
+refits from train, so "frozen" needs a checkable definition. → The frozen model is the committed
+`app/model/model.json`. Section 6 of notebook 02 refuses to evaluate unless this run reproduces it (same OPL commit,
+same threshold, validation predictions within 1e-6), evaluates it once on test with the cut-offs fixed on validation
+(model, B1–B3, segments) and stores the results with the date in the model card. Re-runs of the same model keep the
+results and the original date; a changed model drops them with a warning. The app then shows test tables.
+Consequence: set `EVALUATE_TEST = True` and run once on the snapshot `b55424f4`; record the date in a new entry here.
