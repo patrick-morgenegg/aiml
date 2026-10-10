@@ -51,3 +51,31 @@ cannot run the notebook.
 `prev_best_deadlift_kg` and `prev_meets_count` use every earlier OPL entry of the athlete (any event, any year,
 also outside the period), restricted to strictly earlier dates and plausible weights. They are candidates only
 (report 7.3) and not part of the core feature set.
+
+### D-12 Model monotone in the planned weight (2026-10-10)
+In the data, small jumps after a good 2nd attempt fail *more* often (≈46 % at 0–2.5 % vs ≈33 % at 5–7.5 %) because
+coaches choose them after a slow 2nd attempt. An unconstrained logistic regression learns this and predicts lower
+risk for heavier attempts in 100 % of sampled validation situations – useless for choosing a weight.
+→ Logistic regression (`notebooks/02_model_training.ipynb`) whose weight-dependent features are non-decreasing in the
+planned weight and whose coefficients are constrained ≥ 0. Cost: validation PR-AUC 0.551 vs 0.555 unconstrained.
+Consequence: the predicted risk is flat up to about +5 %; the app explains this limitation.
+
+### D-13 The app suggests a weight within a coach-set limit (2026-10-10)
+Supersedes the "never recommend a weight" rule of the first version of spec 08: the project owners asked for an app
+that suggests the heaviest weight an athlete can attempt. With a monotone model that question is well defined for a
+given risk limit. → The app suggests the heaviest allowed weight within the limit the coach sets, always next to
+the full risk curve and table; it never declares a weight, and overrides are logged (report 6.3 still holds).
+
+### D-14 Default limit: extra risk over the smallest jump (2026-10-10)
+About 39 % of 3rd attempts fail, so typical lifters start at 34–45 % risk even with the smallest jump; a fixed
+absolute default such as 35 % would often find no weight. → Default mode "extra risk", +5 points (presets 2 / 5 / 10);
+the absolute mode defaults to the model threshold (35 %). "Close to the limit" band: ±2 points.
+
+### D-15 Test split not evaluated yet (2026-10-10)
+Spec 06 allows exactly one test evaluation, after the model is frozen. The team may still change features or the
+model. → Notebook 02 has `EVALUATE_TEST = False`; the app shows validation metrics and says the test split is unused.
+
+### D-16 Static HTML/JS app with an exported model card (2026-10-10)
+Requested by the project owners: a simple HTML and JavaScript application in its own folder. → `app/` runs without a
+server or build step (also from disk); the model is a logistic regression exported as JSON and evaluated in the
+browser; Node tests check it against Python reference probabilities.

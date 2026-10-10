@@ -6,8 +6,11 @@ After the 2nd deadlift attempt a coach must declare the weight of the 3rd. This 
 probability that the 3rd attempt **fails** for a planned weight (binary classification), using public
 competition data from [OpenPowerlifting](https://www.openpowerlifting.org) (Public Domain).
 
-This repository holds the **data preparation** and the **specs** for everything built on top of it,
-in particular a coach-facing decision-support app.
+This repository holds the **data preparation**, the **model**, the **specs** and the coach-facing
+**[Third Attempt Planner](app/README.md)** – a static HTML/JS app that shows the failure risk of every allowed
+3rd-attempt weight and suggests the heaviest weight within the coach's risk limit.
+
+**Try the app:** open `app/index.html` in a browser (no install, no server).
 
 ## Quick start
 
@@ -16,6 +19,8 @@ pip install -r requirements.txt
 jupyter nbconvert --to notebook --execute --inplace \
   --ExecutePreprocessor.timeout=3600 notebooks/01_data_extraction_and_cleaning.ipynb
 python scripts/validate_dataset.py data/processed/deadlift3_attempts.parquet --metadata data/processed/metadata.json
+jupyter nbconvert --to notebook --execute --inplace notebooks/02_model_training.ipynb   # retrain the app model
+node --test "app/tests/*.test.js"                                                         # app tests
 ```
 
 Or open the notebook in Jupyter and *Run All*. The first run downloads ~170 MB. If the download host is blocked
@@ -32,10 +37,16 @@ in your network, see *Option B* in [docs/specs/02-data-source.md](docs/specs/02-
 
 Current numbers and the full cleaning funnel: [`data/processed/metadata.json`](data/processed/metadata.json).
 
+Model (validation split): PR-AUC 0.55 vs. 0.39 base rate and 0.43 for "fails if the 2nd attempt failed";
+70 % of failed attempts caught at 48 % precision; well calibrated; risk constrained to rise with weight.
+Details: [docs/specs/07-evaluation-and-fairness.md](docs/specs/07-evaluation-and-fairness.md).
+
 ## Repository layout
 
 ```
 notebooks/01_data_extraction_and_cleaning.ipynb   extract → clean → features → pseudonymise → split → export
+notebooks/02_model_training.ipynb                  monotone logistic regression → app/model/model.json
+app/                                               Third Attempt Planner (static HTML + JS, works from disk)
 scripts/validate_dataset.py                        checks any export against the dataset contract
 data/raw/                                          downloaded OpenPowerlifting zip (git-ignored)
 data/processed/                                    full Parquet/CSV (git-ignored) + metadata.json (in git)
@@ -52,7 +63,7 @@ CLAUDE.md                                          instructions for coding agent
 | [`refresh-dataset`](.claude/skills/refresh-dataset/SKILL.md) | rebuild and validate the dataset (fresh clone, new snapshot, rule change) |
 | [`dataset-contract`](.claude/skills/dataset-contract/SKILL.md) | load the data correctly, pick features from the schema, respect the split |
 | [`leakage-check`](.claude/skills/leakage-check/SKILL.md) | review a new feature, input field or processing step for leakage |
-| [`coach-app`](.claude/skills/coach-app/SKILL.md) | build or review the decision-support app against spec 08 |
+| [`coach-app`](.claude/skills/coach-app/SKILL.md) | change or review the Third Attempt Planner in `app/` against spec 08 |
 
 In Claude Code they load automatically when relevant, or call them as `/refresh-dataset` etc.
 

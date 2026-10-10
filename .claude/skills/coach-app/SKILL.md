@@ -1,46 +1,47 @@
 ---
 name: coach-app
-description: Build, extend or review the coach-facing decision-support app that estimates the risk of failing the 3rd deadlift attempt. Use for any work on the application – new screens, the prediction endpoint, model loading, input forms, the decision log, model card or fairness views – and before calling an app feature done.
+description: Build, extend or review the Third Attempt Planner in app/ – the static HTML/JS decision-support app that shows the risk of failing the 3rd deadlift attempt for every allowed weight and suggests the heaviest weight within the coach's risk limit. Use for any work on the app (screens, inputs, prediction logic in app/js/model.js, chart, decision log, model card view) and whenever the model export in notebooks/02_model_training.ipynb changes.
 ---
 
 # Coach app
 
-The binding spec is `docs/specs/08-app-integration.md`. Read it before writing app code; this skill is the
-working checklist.
+Binding spec: `docs/specs/08-app-integration.md`. App overview: `app/README.md`. Read both before changing app code.
 
-## Before coding
+## Architecture (keep it)
 
-1. Read spec 08, plus spec 04 (data) and spec 07 (metrics) for what the app displays.
-2. Stack: follow what is already in the repo. If nothing exists, propose Python + Streamlit + scikit-learn
-   (spec 08 default) and confirm with the user before scaffolding a different stack.
-3. Data for development: `data/sample/deadlift3_attempts_sample.csv`. The app must start with only the
-   repository content. Training a real model needs the full Parquet → `refresh-dataset` skill.
-4. Load dataset knowledge from files, not literals: `docs/specs/dataset_schema.json` (features, allowed values),
-   `data/processed/metadata.json` (input ranges, category levels, snapshot), `models/<version>/model_card.json`
-   (threshold, metrics, features).
+- Static HTML + CSS + classic `<script>` files – no build step, no framework, no server; `index.html` must keep
+  working when opened from disk (that is why the model ships as `model/model-data.js`, a global, not a fetched
+  JSON or an ES module).
+- `js/model.js` holds all prediction logic as pure functions (UMD: `window.DeadliftModel` and `require`). UI code
+  (`js/app.js`, `js/chart.js`) never computes features or risks itself.
+- The model card (`app/model/model.json` + `model-data.js`) is **generated** by `notebooks/02_model_training.ipynb`.
+  Never edit it by hand; change the notebook and re-run it.
+- Colours only through the CSS tokens in `styles.css` (light + dark blocks); status = icon + text, never colour alone.
 
 ## Non-negotiables
 
-- Inputs exactly as `AttemptContext` in spec 08; **no sex field**; `dl3_jump_pct` computed, never typed.
-- Reject candidates below DL2, equal to DL2 after a good DL2, or with a jump > 25 %; reject values outside the
-  schema bounds; flag values outside train p01–p99 as "unusual".
-- Output per candidate: `p_fail` (whole percent), `warning` (icon + text, never colour alone), `uncertain` when
-  within the uncertainty band of the threshold.
-- Never pre-select or recommend "the" weight; the coach decides. Choosing a warned weight is allowed and logged
-  as an override.
-- No names, meet names or ids in the UI; no per-athlete drill-down; aggregated views need ≥ 20 rows per cell.
-- Fit nothing on validation/test; never compute test metrics live in the app – display the model card.
-- Show the OpenPowerlifting attribution and the data snapshot on the *Model & data* screen.
+- Inputs exactly as `AttemptContext` in spec 08; **no sex field**; jump % is computed, never typed;
+  an empty previous best means "first competition" and the UI must say so.
+- Risk must never decrease when the planned weight increases. Any new weight-dependent feature must be
+  non-decreasing in the weight and get a `>= 0` bound in notebook 02 (`DECISION_FEATURES`).
+- The suggestion is the heaviest allowed weight within the limit **the coach sets**; always show the full curve and
+  table with it; never declare a weight; logging a weight above the limit is allowed and marked as override.
+- Reject weights below DL2, equal to DL2 after a good DL2, or above +25 %; reject inputs outside the bounds; flag
+  inputs outside the train 1st–99th percentile.
+- No names, meet names or ids; nothing leaves the browser; no per-athlete views.
+- Metrics come from the model card. Validation metrics until the test split has been evaluated once
+  (`EVALUATE_TEST` in notebook 02, decision D-15).
 
 ## When adding a model input
 
-Run the `leakage-check` skill first, then make sure the field can be provided by the coach at the decision
-point and is added to the model card's `features`.
+Run the `leakage-check` skill first, confirm the coach can provide it at the decision point, add it to
+`make_features()` in notebook 02 **and** `features()` in `js/model.js` (same formula), re-run the notebook, then the tests.
 
 ## Definition of done
 
-- Spec 08 acceptance criteria all hold (tick them in the PR description).
-- Tests run on the sample CSV: input validation, prediction contract (shape, ranges, determinism), no forbidden
-  or `sex` fields in requests/responses.
-- `python scripts/validate_dataset.py data/sample/deadlift3_attempts_sample.csv` passes in CI.
-- Screens checked in a running app (use the `run` skill if available), including a narrow/mobile width.
+- `node --test "app/tests/*.test.js"` passes (Python/JS agreement to 1e-9, monotonicity, attempt rules, suggestion,
+  validation, no sex, determinism).
+- `python scripts/validate_dataset.py data/sample/deadlift3_attempts_sample.csv` passes.
+- The page is checked in a browser at desktop and phone width (≈390 px), light and dark: no horizontal scroll,
+  no console errors, chart labels readable.
+- Spec 08 acceptance criteria still hold; new decisions go into `docs/decisions.md`.

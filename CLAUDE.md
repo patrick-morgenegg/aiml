@@ -9,7 +9,9 @@ project report; precise specs are in `docs/` (start at `docs/README.md`).
 - Data pipeline: `notebooks/01_data_extraction_and_cleaning.ipynb` (all parameters in its `parameters` cell)
 - Dataset contract: `docs/specs/dataset_schema.json` + `docs/specs/04-dataset-contract.md`
 - Contract check: `python scripts/validate_dataset.py <file> [--metadata data/processed/metadata.json]`
-- App requirements: `docs/specs/08-app-integration.md`
+- Model training + export: `notebooks/02_model_training.ipynb` → `app/model/model.json` (generated, never hand-edit)
+- App: `app/` (static HTML + JS, see `app/README.md`); requirements: `docs/specs/08-app-integration.md`
+- Tests: `node --test "app/tests/*.test.js"`
 - Why things are the way they are: `docs/decisions.md`
 
 ## Rules that always apply
@@ -21,6 +23,7 @@ project report; precise specs are in `docs/` (start at `docs/README.md`).
 - **Sex** is for fairness tables only – never an input, field or filter.
 - Read feature lists, allowed values and ranges from `dataset_schema.json` / `metadata.json`, not literals.
 - Read `record_id` / `athlete_id` as strings when loading CSV.
+- The app model must stay monotone: predicted risk never decreases as the planned weight increases.
 - Develop and test against `data/sample/deadlift3_attempts_sample.csv`; the full Parquet is git-ignored –
   rebuild it with the `refresh-dataset` skill. Never commit `data/raw/*` or full exports.
 - A change to data or schema = notebook + schema + specs + `docs/decisions.md` in one commit, schema version

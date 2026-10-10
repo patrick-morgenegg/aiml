@@ -18,6 +18,7 @@ Section references such as "report 3.4" point to that report.
 | 08 | [App integration](specs/08-app-integration.md) | build the coach-facing (vibe-coded) application |
 | – | [`dataset_schema.json`](specs/dataset_schema.json) | need the machine-readable column contract |
 | – | [Decision log](decisions.md) | want to know *why* a rule or parameter is the way it is |
+| – | [App README](../app/README.md) | run, test or change the Third Attempt Planner |
 
 ## How the pieces fit
 
@@ -28,7 +29,10 @@ OpenPowerlifting bulk CSV (Public Domain)
 data/processed/deadlift3_attempts.{parquet,csv} + metadata.json
         │  contract: specs/04 + dataset_schema.json, checked by scripts/validate_dataset.py
         ▼
-model training / evaluation (spec 07)  →  coach app (spec 08)
+notebooks/02_model_training.ipynb   ← specs 06, 07  (fit on train, choose on validation)
+        │  app/model/model.json (model card)
+        ▼
+app/  Third Attempt Planner, static HTML + JS   ← spec 08
 ```
 
 ## Rules for changing a spec

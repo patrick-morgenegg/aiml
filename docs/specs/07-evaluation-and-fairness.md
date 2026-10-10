@@ -55,6 +55,28 @@ precision and recall by sex and age group. Retrain and recalibrate when recall d
 10 pp, or when rules or equipment trends change (concept drift). `meet_year` and `federation` support
 these analyses.
 
+## Current results (validation, model `monotone-logreg-v1`, snapshot 2026-10-10)
+
+From `notebooks/02_model_training.ipynb`; the test split is still unused (decision D-15).
+
+| Approach | Precision | Recall | PR-AUC |
+|---|---:|---:|---:|
+| B1 always succeeds | – | 0.00 | 0.39 |
+| B2 fails if jump ≥ x % (no cut-off reaches recall 0.70; x = 0 warns on every attempt) | 0.39 | 1.00 | 0.34 |
+| B3 fails if 2nd attempt failed | 0.62 | 0.18 | 0.43 |
+| Logistic regression, unconstrained | 0.49 | 0.70 | 0.56 |
+| **Logistic regression, monotone in weight (app model)** | **0.48** | **0.70** | **0.55** |
+
+Threshold 0.354 (highest precision with recall ≥ 0.70). Calibration: predicted and observed failure rates agree
+within ~1 point in every decile (17 % … 66 %). The jump alone ranks *worse* than chance (PR-AUC 0.34 < 0.39) –
+the selection effect of decision D-12.
+
+Segments at the threshold: precision is similar everywhere (0.46–0.55), but **recall differs** – men 0.79 vs
+women 0.49 (women's 3rd attempts fail less often: 34 % vs 41 %), Sub-Juniors 0.59, Masters 0.61, Single-ply 0.84,
+Multi-ply 0.91. Mx (16 validation rows) and Unlimited are too small to judge. With equal precision and different
+base rates, equal recall would need group-specific thresholds; discuss this trade-off in report 6.2 rather than
+silently adding `sex` back as a threshold input.
+
 ## Reporting checklist
 
 - [ ] Data numbers from `metadata.json` (`summary`, `splits`) in report 3.1 and Table 2

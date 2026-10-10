@@ -40,6 +40,11 @@ remaining risks listed here.
 | `prev_best_deadlift_kg` | strictly earlier meets only; missing for first-timers (~31 %) – missingness itself is informative |
 | `prev_meets_count` | experience proxy; depends on federation coverage in OPL |
 
+**In use by the app model** (`notebooks/02_model_training.ipynb`, leakage check 2026-10-10): `prev_best_deadlift_kg`,
+with a first-competition indicator. Missing in the data means "no earlier OpenPowerlifting meet", so the app asks the
+coach to leave it empty only for a first competition. The model expresses all inputs as log-ratios to the 2nd
+attempt or bodyweight; see notebook 02, section 1.
+
 ## Excluded – leakage (report 3.4)
 
 | Column | Reason |

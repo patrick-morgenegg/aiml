@@ -1,30 +1,30 @@
 # 08 – App integration (coach-facing decision support)
 
-Requirements for the application built on top of the cleaned dataset. Any stack is fine as long as the
-contracts below hold. **Recommended default:** Python + Streamlit + scikit-learn – it reads Parquet natively
-and shares the language of the notebook. A JavaScript front end can use the CSV and a model exported
-to JSON (e.g. logistic-regression coefficients).
+Requirements for the application built on top of the cleaned dataset. The implementation is the static
+HTML + JavaScript app in [`app/`](../../app/README.md) (decision D-16); its model comes from
+`notebooks/02_model_training.ipynb`. Another stack is fine as long as the contracts below hold.
 
 ## 1. Users and job
 
 | User | Job in the app |
 |---|---|
-| Coach | after the 2nd deadlift: enter the situation, compare candidate weights for the 3rd attempt, decide |
+| Coach | after the 2nd deadlift: enter the situation, see the risk of every allowed weight and the heaviest weight within their risk limit, decide |
 | Athlete | sees the same view together with the coach |
 | Project team | sees model card, metrics, fairness table; reviews the decision log |
 
-The app **supports** the decision. It never declares a weight, never auto-selects one, and never hides
-the uncertainty.
+The app **supports** the decision. It suggests the heaviest weight within a limit **the coach sets**
+(decision D-13), always shows the whole risk curve next to it, never declares a weight on its own and never
+hides the uncertainty.
 
 ## 2. Data access rules
 
-1. Read only `data/processed/*` and `data/sample/*`; never the raw zip.
-2. Development, tests and demos run on `data/sample/deadlift3_attempts_sample.csv` (in git). Training uses the
-   full Parquet (regenerate with the `refresh-dataset` skill if missing).
-3. Use the exported `split`; never re-split, never fit on validation/test (spec 06).
-4. Take feature lists and allowed values from `dataset_schema.json` and `metadata.json`, not from literals.
-5. Read ids as strings (spec 04).
-6. Check `schema_version` major on startup; refuse to run on an unknown major version.
+1. The app reads only its model card (`app/model/model.json` or `model-data.js`). It never loads the raw zip or the
+   full dataset; training and evaluation happen in notebook 02.
+2. Development data for anything that needs rows: `data/sample/deadlift3_attempts_sample.csv` (in git).
+3. Training uses the exported `split`: fit on train, choose on validation, test once (spec 06).
+4. Feature definitions, categories, bounds and typical ranges come from the model card, which notebook 02 fills
+   from `dataset_schema.json` and `metadata.json` – no literals in the app.
+5. Check the model card's `dataset.schema_version` major on startup; refuse an unknown major version.
 
 ## 3. Prediction contract
 
@@ -35,80 +35,85 @@ the uncertainty.
 | `dl2_weight_kg` | number (kg) | yes | schema bounds (20–500) |
 | `dl2_success` | boolean | yes | |
 | `bodyweight_kg` | number (kg) | yes | 20–300 |
-| `age_class_group` | enum | yes | `metadata.category_levels.age_class_group` (`Unknown` allowed) |
-| `equipment` | enum | yes | `metadata.category_levels.equipment` |
 | `best_squat_kg` | number (kg) | yes | 10–600 |
 | `best_bench_kg` | number (kg) | yes | 5–400 |
-| `candidate_dl3_weights_kg` | number[] (1–10 values) | yes | each `≥ dl2_weight_kg`, `> dl2_weight_kg` if `dl2_success`, jump ≤ 25 % |
-| `dl1_weight_kg`, `dl1_success`, `prev_best_deadlift_kg` | optional | no | only if the model uses them |
+| `equipment` | enum | yes | `categories.equipment` |
+| `age_class_group` | enum | yes | `categories.age_class_group` (`Unknown` allowed) |
+| `prev_best_deadlift_kg` | number (kg) or empty | no | 20–500. Empty means **first competition** (that is what a missing value means in the training data) |
 
-There is **no `sex` field** – not even optional (spec 05).
+There is **no `sex` field** – not even optional (spec 05). Values outside the train 1st–99th percentile
+(`input_typical`, and `profile_typical` for the ratios the model uses) are accepted with a visible
+"less reliable" note; values outside the bounds are rejected with a message.
 
-Values outside the train p01–p99 range (`metadata.feature_ranges_train`) are accepted with a visible
-"unusual input – prediction less reliable" note; values outside the schema bounds are rejected with a message.
-The UI proposes candidates in 2.5 kg steps from DL2 (+2.5 … +10 %), editable by the coach.
+### Settings
+
+| Setting | Values | Default |
+|---|---|---|
+| Increment | 2.5 kg (standard), 1 kg, 0.5 kg (record attempts) | 2.5 kg |
+| Limit mode `extra` | accept up to *Δ* points more risk than the smallest allowed jump; presets 2 / 5 / 10 | +5 points |
+| Limit mode `absolute` | accept up to *x* % failure risk; presets 30 / 40 / 50 | model threshold (35 %) |
+
+### Candidates and suggestion
+
+* Candidates: multiples of the increment strictly above DL2 after a good 2nd attempt; after a miss, DL2 itself
+  (repeat) and the multiples above it; up to DL2 × 1.25 (`max_jump_pct`).
+* `limit_risk` = `p_fail(smallest) + Δ` (extra) or `x` (absolute).
+* Suggestion = the heaviest candidate with `p_fail ≤ limit_risk`. The model is monotone, so this is well defined.
+  In absolute mode there may be none; the app then says so and shows the smallest jump with its risk.
 
 ### Output – one `AttemptRisk` per candidate
 
 ```json
-{
-  "dl3_weight_kg": 230.0,
-  "dl3_jump_pct": 4.55,
-  "p_fail": 0.41,
-  "warning": true,
-  "uncertain": true,
-  "threshold": 0.38,
-  "model_version": "logreg-2026-10-12",
-  "dataset_snapshot": "2026-10-10"
-}
+{ "weight_kg": 247.5, "jump_pct": 7.61, "p_fail": 0.449, "within_limit": true, "warning": false, "uncertain": true }
 ```
 
-* `dl3_jump_pct` is computed by the app from the weights – never entered.
-* `warning = p_fail ≥ threshold`; the threshold comes from the model card (chosen on validation, spec 07).
-* `uncertain = |p_fail − threshold| < 0.05` (configurable `UNCERTAINTY_BAND`). Shown as
-  "uncertain – rely on warm-ups, bar speed and day form" (report 6.3).
-* Same input + same model → same output (no randomness at inference).
+* `jump_pct` is computed from the weights – never entered.
+* `warning = p_fail > limit_risk`, shown as icon + text ("Above limit"), never colour alone.
+* `uncertain = |p_fail − limit_risk| < uncertainty_band` (0.02), shown as "Close to limit".
+* Same input + same model → same output.
 
 ### Model artifact
 
-`models/<model_version>/` contains the model file and `model_card.json`:
-`model_version`, `created_utc`, `features` (ordered), `threshold`, `uncertainty_band`,
-`metrics.validation` and `metrics.test` (precision, recall, PR-AUC), `baselines` (B1–B3 on test),
-`segments` (Table 4 rows), `dataset.snapshot_date`, `dataset.opl_commit`, `dataset.schema_version`.
-The app reads everything it displays about the model from this file.
+`app/model/model.json` (and the identical `model-data.js`, generated by notebook 02):
+`model_version`, `created_utc`, `features` with formulas, `intercept`, `coefficients` (full precision),
+`constants`, `categories`, `threshold`, `threshold_rule`, `uncertainty_band`, `max_jump_pct`, `input_bounds`,
+`input_typical`, `profile_typical`, `metrics.validation`, `metrics.test` (null until evaluated),
+`baselines_validation`, `monotonicity_check_validation`, `calibration_validation`, `segments_validation`,
+`limitations`, `dataset`, `attribution`. The app reads everything it displays about the model from this file.
+`app/tests/reference_cases.json` holds Python probabilities the JavaScript must reproduce to 1e-9.
 
 ## 4. Screens
 
 | Screen | Must show | Must not |
 |---|---|---|
-| **Attempt planner** (start page) | input form; table of candidates with weight, jump %, `p_fail` as a percentage, warning badge (icon + text, not colour alone), "uncertain" tag; a sentence that the coach decides | recommend or pre-select "the" weight; show more than one decimal of probability |
-| **Decision log** | per decision: timestamp, context, candidates and risks, chosen weight, *override* flag (a warned weight was chosen), actual outcome (good / failed, entered afterwards) | ask for or store names; free text without a "no names" hint |
-| **Model & data** | model card numbers, baselines, threshold, data snapshot, limitations (spec 01, report 7), OpenPowerlifting attribution | test metrics computed live on the test set |
-| **Fairness** | segment table (precision, recall, n) from the model card; small segments marked unreliable | per-athlete data |
-| **Explore** (optional) | aggregated charts, e.g. failure rate by jump bin and 2nd-attempt outcome, train split | cells with fewer than 20 rows; lists of athletes or meets |
+| **Planner** (start page, opens with marked example values) | input form; risk limit; suggested weight with jump %, `p_fail`, plate loading; risk curve with the limit; table of all candidates with status; a sentence that the coach decides | declare a weight; hide the curve or the table behind the suggestion; show more than whole-percent probabilities |
+| **Decision log** | per decision: timestamp, context, limit, suggested and declared weight, risk, *override* flag (declared weight above the limit), outcome (good / no lift, entered afterwards); copy as CSV | ask for or store names or free text |
+| **Model & data** | model card numbers vs. baselines, calibration, threshold, data snapshot, limitations, OpenPowerlifting attribution, test status | test metrics computed live |
+| **Fairness** (part of Model & data) | segment table (n, failed, precision, recall) with small and deviating segments marked | per-athlete data |
 
 ## 5. Human in the loop and logging (report 6.3, 6.4)
 
-* The coach can always choose any weight; choosing a warned weight records `override = true`, never blocks.
-* The decision log is stored locally (CSV or SQLite under `app_data/`, git-ignored) and is exportable as CSV.
-  It contains no personal identifiers.
+* The coach can declare any allowed weight; a weight above the limit is logged with `override = true`, never blocked.
+* The decision log lives in the browser (`localStorage`), contains no personal identifiers and is exported by
+  copying it as CSV.
 * The log is the feedback source for monitoring and retraining (spec 07, "Monitoring").
 
 ## 6. Privacy and ethics (report 6.5)
 
-* No names, no meet names, no athlete or record ids in the UI.
+* No names, meet names or ids in the UI; nothing is sent anywhere.
 * No search, filter or drill-down that isolates one athlete.
 * `sex` appears only in the fairness table.
-* Show the OpenPowerlifting attribution on the *Model & data* screen.
+* The OpenPowerlifting attribution is shown on *Model & data*.
 
 ## 7. Acceptance criteria
 
-- [ ] Starts with only the repository content (sample CSV), without the full dataset.
-- [ ] Rejects out-of-bounds inputs with a clear message; flags unusual inputs.
-- [ ] Candidate weights below DL2 (or equal after a good DL2) cannot be evaluated.
-- [ ] Every candidate shows `p_fail`, warning and uncertain state; warnings are readable without colour.
-- [ ] No input or output field for sex; no names or ids anywhere in the UI.
-- [ ] Model card and data snapshot visible; OPL attribution present.
-- [ ] Overrides and outcomes are logged without personal data.
-- [ ] Automated tests cover input validation and the prediction contract on the sample CSV;
-      CI runs `python scripts/validate_dataset.py data/sample/deadlift3_attempts_sample.csv`.
+- [x] Starts with only the repository content (works from disk, no server, no full dataset).
+- [x] Rejects out-of-bounds inputs with a clear message; flags unusual inputs.
+- [x] Candidate weights below DL2 (or equal after a good DL2) or beyond +25 % cannot be evaluated or logged.
+- [x] Every candidate shows `p_fail`, limit status and "close to limit"; readable without colour.
+- [x] Predicted risk never decreases with the planned weight (tested).
+- [x] No input or output field for sex; no names or ids anywhere in the UI (tested).
+- [x] Model card and data snapshot visible; OPL attribution present.
+- [x] Overrides and outcomes are logged without personal data.
+- [x] Automated tests (`node --test "app/tests/*.test.js"`) cover the Python/JS agreement, monotonicity, attempt
+      rules, suggestion, input validation and determinism; CI also validates the sample CSV.

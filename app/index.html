@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Third Attempt Planner</title>
+<meta name="description" content="Plan the 3rd deadlift attempt: failure risk for every allowed weight and the heaviest weight within your risk limit, based on OpenPowerlifting competition data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--APP-START-->
+<header class="masthead">
+  <div class="wrap masthead__inner">
+    <div class="brand">
+      <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="1" y="18" width="38" height="4" rx="1" class="mark-bar"/>
+        <rect x="8" y="5" width="6" height="30" rx="1.5" class="mark-plate-a"/>
+        <rect x="15" y="9" width="4" height="22" rx="1" class="mark-plate-b"/>
+        <rect x="26" y="5" width="6" height="30" rx="1.5" class="mark-plate-a"/>
+        <rect x="21" y="9" width="4" height="22" rx="1" class="mark-plate-b"/>
+      </svg>
+      <div>
+        <p class="eyebrow">Deadlift · 3rd attempt</p>
+        <h1>Third Attempt Planner</h1>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Sections">
+      <a href="#planner">Planner</a>
+      <a href="#log">Decision log</a>
+      <a href="#model">Model &amp; data</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="planner" class="planner" aria-labelledby="planner-title">
+    <h2 id="planner-title" class="visually-hidden">Planner</h2>
+
+    <form id="context-form" class="slip" novalidate>
+      <div class="slip__head">
+        <h3>After the 2nd attempt</h3>
+        <p class="slip__note" id="example-note">Example values. Replace them with your athlete's numbers.
+          <button type="button" id="clear-form" class="linklike">Clear form</button></p>
+      </div>
+
+      <fieldset class="group">
+        <legend>Deadlift so far</legend>
+        <div class="row">
+          <div class="field">
+            <label for="dl2_weight_kg">2nd attempt</label>
+            <div class="input-unit"><input id="dl2_weight_kg" name="dl2_weight_kg" type="number" inputmode="decimal" step="0.5" min="20" max="500" value="230" required><span>kg</span></div>
+            <p class="field__error" id="err-dl2_weight_kg"></p>
+          </div>
+          <div class="field">
+            <span class="label" id="dl2-result-label">Result</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="dl2-result-label">
+              <input type="radio" id="dl2-good" name="dl2_success" value="1" checked><label for="dl2-good">Good lift</label>
+              <input type="radio" id="dl2-miss" name="dl2_success" value="0"><label for="dl2-miss">No lift</label>
+            </div>
+            <p class="field__error" id="err-dl2_success"></p>
+          </div>
+        </div>
+        <div class="field">
+          <label for="prev_best_deadlift_kg">Previous best competition deadlift <span class="optional">optional</span></label>
+          <div class="input-unit"><input id="prev_best_deadlift_kg" name="prev_best_deadlift_kg" type="number" inputmode="decimal" step="0.5" min="20" max="500" value="235"><span>kg</span></div>
+          <p class="field__hint">Leave empty only if this is the athlete's first competition.</p>
+          <p class="field__error" id="err-prev_best_deadlift_kg"></p>
+        </div>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend>Today</legend>
+        <div class="row row--3">
+          <div class="field">
+            <label for="best_squat_kg">Best squat</label>
+            <div class="input-unit"><input id="best_squat_kg" name="best_squat_kg" type="number" inputmode="decimal" step="0.5" min="10" max="600" value="210" required><span>kg</span></div>
+            <p class="field__error" id="err-best_squat_kg"></p>
+          </div>
+          <div class="field">
+            <label for="best_bench_kg">Best bench</label>
+            <div class="input-unit"><input id="best_bench_kg" name="best_bench_kg" type="number" inputmode="decimal" step="0.5" min="5" max="400" value="140" required><span>kg</span></div>
+            <p class="field__error" id="err-best_bench_kg"></p>
+          </div>
+          <div class="field">
+            <label for="bodyweight_kg">Bodyweight</label>
+            <div class="input-unit"><input id="bodyweight_kg" name="bodyweight_kg" type="number" inputmode="decimal" step="0.05" min="20" max="300" value="82.5" required><span>kg</span></div>
+            <p class="field__error" id="err-bodyweight_kg"></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend>Athlete</legend>
+        <div class="row">
+          <div class="field">
+            <label for="equipment">Equipment</label>
+            <select id="equipment" name="equipment"></select>
+            <p class="field__error" id="err-equipment"></p>
+          </div>
+          <div class="field">
+            <label for="age_class_group">Age group</label>
+            <select id="age_class_group" name="age_class_group"></select>
+            <p class="field__error" id="err-age_class_group"></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="group group--limit">
+        <legend>Risk limit</legend>
+        <div class="segmented segmented--wide" role="radiogroup" aria-label="How to set the limit">
+          <input type="radio" id="mode-extra" name="mode" value="extra" checked><label for="mode-extra">Extra risk vs. smallest jump</label>
+          <input type="radio" id="mode-absolute" name="mode" value="absolute"><label for="mode-absolute">Maximum failure risk</label>
+        </div>
+        <div class="limit">
+          <label for="limit" class="limit__label" id="limit-label">Accept up to</label>
+          <output for="limit" id="limit-out" class="limit__value">+5 points</output>
+          <input type="range" id="limit" name="limit" min="0" max="15" step="0.5" value="5">
+          <div class="presets" id="presets">
+            <button type="button" data-preset="0">Conservative</button>
+            <button type="button" data-preset="1">Balanced</button>
+            <button type="button" data-preset="2">Aggressive</button>
+          </div>
+        </div>
+        <div class="field field--inline">
+          <label for="step">Weight increments</label>
+          <select id="step" name="step">
+            <option value="2.5" selected>2.5 kg (standard)</option>
+            <option value="1">1 kg</option>
+            <option value="0.5">0.5 kg (record attempts)</option>
+          </select>
+        </div>
+      </fieldset>
+    </form>
+
+    <div class="result">
+      <div class="verdict" id="verdict" aria-live="polite">
+        <p class="eyebrow" id="verdict-eyebrow">Suggested 3rd attempt</p>
+        <p class="verdict__weight"><span id="verdict-kg">–</span><span class="verdict__unit">kg</span></p>
+        <p class="verdict__meta" id="verdict-meta"></p>
+        <p class="verdict__explain" id="verdict-explain"></p>
+        <div class="loading" id="loading">
+          <svg id="loading-svg" class="loading__svg" role="img" aria-labelledby="loading-text"></svg>
+          <p class="loading__text" id="loading-text"></p>
+        </div>
+        <ul class="notes" id="input-notes"></ul>
+        <p class="verdict__coach">The coach decides. Check the suggestion against the warm-ups, the bar speed of the
+          2nd attempt and how the athlete feels – none of that is in the data.</p>
+      </div>
+
+      <figure class="card chart-card">
+        <figcaption>
+          <span class="card__title">Failure risk by declared weight</span>
+          <span class="legend" id="chart-legend"></span>
+        </figcaption>
+        <div id="chart" class="chart"></div>
+        <p class="chart-card__foot">The curve is flat for small jumps because, in competition data, coaches already pick
+          small jumps after a slow 2nd attempt. The model therefore cannot show how much safer a small jump is for your
+          athlete; it only guarantees that more weight never looks safer.</p>
+      </figure>
+
+      <div class="card table-card">
+        <div class="table-card__head">
+          <span class="card__title">All allowed weights</span>
+          <span class="muted" id="table-caption"></span>
+        </div>
+        <div class="table-scroll">
+          <table class="candidates" id="candidates">
+            <thead><tr><th scope="col">Weight</th><th scope="col">Jump</th><th scope="col">Failure risk</th><th scope="col">Status</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="log" class="section" aria-labelledby="log-title">
+    <div class="section__head">
+      <h2 id="log-title">Decision log</h2>
+      <p class="section__lede">Record what was declared and, after the attempt, whether it was good. Overrides of the
+        risk limit are allowed and marked. The log stays in this browser and holds no names.</p>
+    </div>
+    <form id="log-form" class="log-form" novalidate>
+      <div class="field">
+        <label for="declared_kg">Declared 3rd attempt</label>
+        <div class="input-unit"><input id="declared_kg" name="declared_kg" type="number" inputmode="decimal" step="0.5"><span>kg</span></div>
+        <p class="field__error" id="err-declared_kg"></p>
+      </div>
+      <p class="log-form__preview" id="declared-preview"></p>
+      <button type="submit" class="button">Log decision</button>
+    </form>
+    <div class="card table-card">
+      <div class="table-card__head">
+        <span class="card__title">Logged decisions</span>
+        <span class="toolbar">
+          <button type="button" class="button button--quiet" id="copy-csv">Copy as CSV</button>
+          <button type="button" class="button button--quiet" id="clear-log">Clear log</button>
+        </span>
+      </div>
+      <p class="toolbar__status" id="log-status" role="status"></p>
+      <textarea id="csv-fallback" class="csv-fallback" rows="5" readonly hidden aria-label="Decision log as CSV"></textarea>
+      <div class="table-scroll">
+        <table class="log-table" id="log-table">
+          <thead><tr><th scope="col">Logged</th><th scope="col">2nd</th><th scope="col">Suggested</th><th scope="col">Declared</th><th scope="col">Risk</th><th scope="col">Outcome</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="empty" id="log-empty">No decisions logged yet. Fill in the planner, enter the declared weight above and
+        choose <strong>Log decision</strong>.</p>
+    </div>
+  </section>
+
+  <section id="model" class="section" aria-labelledby="model-title">
+    <div class="section__head">
+      <h2 id="model-title">Model &amp; data</h2>
+      <p class="section__lede" id="model-lede"></p>
+    </div>
+    <div class="model-grid">
+      <div class="card">
+        <span class="card__title">How well it separates failed attempts</span>
+        <p class="muted small" id="metrics-note"></p>
+        <div class="table-scroll"><table class="data-table" id="metrics-table"></table></div>
+      </div>
+      <div class="card">
+        <span class="card__title">Calibration</span>
+        <p class="muted small">Predicted risk against the observed share of failed attempts, validation split, in ten equal groups.</p>
+        <div class="table-scroll"><table class="data-table" id="calibration-table"></table></div>
+      </div>
+      <div class="card card--wide">
+        <span class="card__title">Fairness and segments</span>
+        <p class="muted small" id="segments-note"></p>
+        <div class="table-scroll"><table class="data-table" id="segments-table"></table></div>
+      </div>
+      <div class="card card--wide">
+        <span class="card__title">Limits of this model</span>
+        <ul class="limitations" id="limitations"></ul>
+        <p class="small" id="data-facts"></p>
+        <p class="small attribution" id="attribution"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap footer">
+  <p>KETE AI/ML project · Patrick Morgenegg, Niklas Grün · Decision support only. Nothing you enter leaves this browser.</p>
+</footer>
+<!--APP-END-->
+<script src="model/model-data.js"></script>
+<script src="js/model.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

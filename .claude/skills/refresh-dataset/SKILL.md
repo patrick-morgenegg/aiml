@@ -47,7 +47,15 @@ Produces `data/processed/deadlift3_attempts.{parquet,csv}`, `data/processed/meta
    `06` (split table), `07` (segment sizes), and tell the user which report placeholders (3.1, Table 2) changed.
    The notebook prints a ready-to-paste German table in "Numbers for the report".
 
+7. **Retrain the app model** so `app/` matches the new snapshot:
+   ```bash
+   jupyter nbconvert --to notebook --execute --inplace notebooks/02_model_training.ipynb
+   node --test "app/tests/*.test.js"
+   ```
+   Compare the validation metrics in `app/model/model.json` with the previous version and mention changes.
+
 ## Commit
 
-Commit the executed notebook, `data/processed/metadata.json` and the sample CSV. The full Parquet/CSV and the
+Commit the executed notebooks, `data/processed/metadata.json`, the sample CSV and the regenerated `app/model/*` and
+`app/tests/reference_cases.json`. The full Parquet/CSV and the
 raw zip are git-ignored on purpose (`docs/decisions.md` D-10) – never force-add them.
