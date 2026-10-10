@@ -1,6 +1,6 @@
 {
   "model_version": "monotone-logreg-v1",
-  "created_utc": "2026-10-10T10:29:36+00:00",
+  "created_utc": "2026-10-10T12:33:32+00:00",
   "model_type": "Logistic regression, monotone (non-decreasing) in the planned 3rd-attempt weight",
   "target": "probability that the 3rd deadlift attempt fails (dl3_failed = 1)",
   "dataset": {
@@ -129,31 +129,31 @@
       "grows_with_planned_weight": true
     }
   ],
-  "intercept": -6.202175997628989,
+  "intercept": -6.202175997628986,
   "coefficients": {
-    "dl2_success": -0.974955486235301,
-    "rel_strength": 1.6846943447200071,
-    "log_bodyweight": 0.9637199520406391,
-    "squat_ratio": -0.3356610602571633,
-    "bench_ratio": -1.0082220020427213,
+    "dl2_success": -0.9749554862353013,
+    "rel_strength": 1.684694344720007,
+    "log_bodyweight": 0.9637199520406389,
+    "squat_ratio": -0.33566106025716314,
+    "bench_ratio": -1.0082220020427208,
     "has_prev_best": 0.3186820414796862,
-    "pb_gap": 1.6074729335824194,
-    "pb_gap_pos": -1.3024467845210588,
-    "equipment_Wraps": 0.16364293559480295,
+    "pb_gap": 1.6074729335824207,
+    "pb_gap_pos": -1.3024467845210614,
+    "equipment_Wraps": 0.1636429355948029,
     "equipment_Single-ply": 0.45084976852944025,
-    "equipment_Multi-ply": 0.5452571940195302,
-    "equipment_Unlimited": 0.6222056084452162,
-    "age_Sub-Junior": -0.022235352075927767,
-    "age_Junior": -0.010591335886449194,
-    "age_Masters": 0.0418734983477525,
-    "age_Unknown": 0.05248139482406777,
+    "equipment_Multi-ply": 0.5452571940195295,
+    "equipment_Unlimited": 0.6222056084452154,
+    "age_Sub-Junior": -0.022235352075927778,
+    "age_Junior": -0.01059133588644929,
+    "age_Masters": 0.04187349834775256,
+    "age_Unknown": 0.052481394824067926,
     "jump_after_good": 0.0,
     "jump_after_miss": 0.0,
     "jump_over_2.5": 0.0,
-    "jump_over_5": 3.961593565359825,
-    "jump_over_7.5": 4.865657787886815,
+    "jump_over_5": 3.961593565359826,
+    "jump_over_7.5": 4.865657787886812,
     "jump_over_10": 0.0,
-    "pr_excess": 1.548034302369202
+    "pr_excess": 1.5480343023692043
   },
   "constants": {
     "jump_kinks": [
@@ -261,7 +261,18 @@
       "base_rate": 0.386,
       "n": 131443
     },
-    "test": null
+    "test": {
+      "threshold": 0.3541,
+      "precision": 0.4817,
+      "recall": 0.7022,
+      "flagged_share": 0.5644,
+      "pr_auc": 0.549,
+      "roc_auc": 0.6643,
+      "brier": 0.2184,
+      "base_rate": 0.3872,
+      "n": 131953,
+      "evaluated_utc": "2026-10-10T12:33:33+00:00"
+    }
   },
   "baselines_validation": {
     "B1 always succeeds": {
@@ -509,5 +520,175 @@
     "Federations judge differently, and only the last declared 3rd-attempt weight is recorded.",
     "Small groups (Mx, Multi-ply, Unlimited, very young or old lifters) have few cases; predictions there are less reliable."
   ],
-  "attribution": "This project uses data from the OpenPowerlifting project, https://www.openpowerlifting.org."
+  "attribution": "This project uses data from the OpenPowerlifting project, https://www.openpowerlifting.org.",
+  "baselines_test": {
+    "B1 always succeeds": {
+      "precision": null,
+      "recall": 0.0,
+      "pr_auc": 0.3872
+    },
+    "B2 fails if jump ≥ 0 % (warns on every attempt)": {
+      "precision": 0.3872,
+      "recall": 1.0,
+      "flagged_share": 1.0,
+      "pr_auc": 0.3486
+    },
+    "B3 fails if 2nd attempt failed": {
+      "precision": 0.6066,
+      "recall": 0.1764,
+      "flagged_share": 0.1126,
+      "pr_auc": 0.4259
+    },
+    "Model (monotone logistic regression)": {
+      "precision": 0.4817,
+      "recall": 0.7022,
+      "pr_auc": 0.549,
+      "flagged_share": 0.5644
+    }
+  },
+  "segments_test": [
+    {
+      "segment": "sex",
+      "value": "M",
+      "n": 87952,
+      "failed": 36238,
+      "precision": 0.4834,
+      "recall": 0.7894,
+      "reliable": true,
+      "recall_gap_pp": 8.7,
+      "flag": ""
+    },
+    {
+      "segment": "sex",
+      "value": "F",
+      "n": 43965,
+      "failed": 14848,
+      "precision": 0.475,
+      "recall": 0.4893,
+      "reliable": true,
+      "recall_gap_pp": -21.3,
+      "flag": "check"
+    },
+    {
+      "segment": "sex",
+      "value": "Mx",
+      "n": 36,
+      "failed": 6,
+      "precision": 0.5,
+      "recall": 0.3333,
+      "reliable": false,
+      "recall_gap_pp": -36.9,
+      "flag": "too small"
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Sub-Junior",
+      "n": 16711,
+      "failed": 5893,
+      "precision": 0.4726,
+      "recall": 0.6026,
+      "reliable": true,
+      "recall_gap_pp": -10.0,
+      "flag": ""
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Junior",
+      "n": 32623,
+      "failed": 13259,
+      "precision": 0.4887,
+      "recall": 0.7405,
+      "reliable": true,
+      "recall_gap_pp": 3.8,
+      "flag": ""
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Open",
+      "n": 52472,
+      "failed": 20975,
+      "precision": 0.4859,
+      "recall": 0.7452,
+      "reliable": true,
+      "recall_gap_pp": 4.3,
+      "flag": ""
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Masters",
+      "n": 21158,
+      "failed": 7591,
+      "precision": 0.4646,
+      "recall": 0.6144,
+      "reliable": true,
+      "recall_gap_pp": -8.8,
+      "flag": ""
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Unknown",
+      "n": 8989,
+      "failed": 3374,
+      "precision": 0.474,
+      "recall": 0.6556,
+      "reliable": true,
+      "recall_gap_pp": -4.7,
+      "flag": ""
+    },
+    {
+      "segment": "equipment",
+      "value": "Raw",
+      "n": 105064,
+      "failed": 39272,
+      "precision": 0.4745,
+      "recall": 0.6669,
+      "reliable": true,
+      "recall_gap_pp": -3.5,
+      "flag": ""
+    },
+    {
+      "segment": "equipment",
+      "value": "Wraps",
+      "n": 16745,
+      "failed": 7006,
+      "precision": 0.4878,
+      "recall": 0.7856,
+      "reliable": true,
+      "recall_gap_pp": 8.3,
+      "flag": ""
+    },
+    {
+      "segment": "equipment",
+      "value": "Single-ply",
+      "n": 9094,
+      "failed": 4281,
+      "precision": 0.5216,
+      "recall": 0.8648,
+      "reliable": true,
+      "recall_gap_pp": 16.3,
+      "flag": "check"
+    },
+    {
+      "segment": "equipment",
+      "value": "Multi-ply",
+      "n": 940,
+      "failed": 483,
+      "precision": 0.5411,
+      "recall": 0.8986,
+      "reliable": true,
+      "recall_gap_pp": 19.6,
+      "flag": "check"
+    },
+    {
+      "segment": "equipment",
+      "value": "Unlimited",
+      "n": 110,
+      "failed": 50,
+      "precision": 0.4839,
+      "recall": 0.9,
+      "reliable": false,
+      "recall_gap_pp": 19.8,
+      "flag": "too small"
+    }
+  ]
 }

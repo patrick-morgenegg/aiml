@@ -88,3 +88,11 @@ same threshold, validation predictions within 1e-6), evaluates it once on test w
 (model, B1–B3, segments) and stores the results with the date in the model card. Re-runs of the same model keep the
 results and the original date; a changed model drops them with a warning. The app then shows test tables.
 Consequence: set `EVALUATE_TEST = True` and run once on the snapshot `b55424f4`; record the date in a new entry here.
+
+### D-18 Test split evaluated (2026-10-10)
+Model `monotone-logreg-v1` frozen (D-17), snapshot `b55424f4` (zip SHA-256 `c5d56bb3…`, rebuilt dataset identical to
+the training run), threshold 0.3541 from validation. Evaluated once on 2026-10-10 12:33 UTC with
+`EVALUATE_TEST = True`: 131,953 attempts, precision 0.48, recall 0.70, PR-AUC 0.55 (validation 0.48 / 0.70 / 0.55).
+→ The test set is now used. Any later change to features, model or threshold must be reported as such
+(spec 06, rule 4); `EVALUATE_TEST` stays `True` so re-runs of this model reproduce the same numbers.
+

@@ -39,6 +39,7 @@ Current numbers and the full cleaning funnel: [`data/processed/metadata.json`](d
 
 Model (validation split): PR-AUC 0.55 vs. 0.39 base rate and 0.43 for "fails if the 2nd attempt failed";
 70 % of failed attempts caught at 48 % precision; well calibrated; risk constrained to rise with weight.
+Test split (evaluated once, 2026-10-10): precision 0.48, recall 0.70, PR-AUC 0.55 – same as validation.
 Details: [docs/specs/07-evaluation-and-fairness.md](docs/specs/07-evaluation-and-fairness.md).
 
 ## Repository layout

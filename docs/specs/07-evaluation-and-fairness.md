@@ -57,7 +57,7 @@ these analyses.
 
 ## Current results (validation, model `monotone-logreg-v1`, snapshot 2026-10-10)
 
-From `notebooks/02_model_training.ipynb`; the test split is still unused (decisions D-15, D-17).
+From `notebooks/02_model_training.ipynb`; test results in the next section (decision D-18).
 
 | Approach | Precision | Recall | PR-AUC |
 |---|---:|---:|---:|
@@ -88,10 +88,25 @@ silently adding `sex` back as a threshold input.
 4. The date of the run (`metrics.test.evaluated_utc`) is the date for the report. Report the numbers as they are,
    also if they are worse than on validation.
 
+## Test results (frozen model `monotone-logreg-v1`, evaluated once on 2026-10-10, decision D-18)
+
+131,953 attempts of 51,308 test athletes, 38.7 % failed; threshold 0.3541 and baseline cut-offs from validation.
+
+| Approach | Precision | Recall | PR-AUC |
+|---|---:|---:|---:|
+| B1 always succeeds | – | 0.00 | 0.39 |
+| B2 fails if jump ≥ 0 % (warns on every attempt) | 0.39 | 1.00 | 0.35 |
+| B3 fails if 2nd attempt failed | 0.61 | 0.18 | 0.43 |
+| **Logistic regression, monotone in weight (app model)** | **0.48** | **0.70** | **0.55** |
+
+Test agrees with validation within 0.01 everywhere. Segments: men recall 0.79 vs women 0.49 (precision 0.48 / 0.48),
+Sub-Juniors 0.60, Masters 0.61, Single-ply 0.86, Multi-ply 0.90; Mx (36 rows, 6 failures) and Unlimited too small.
+Full table: `app/model/model.json` → `segments_test`.
+
 ## Reporting checklist
 
 - [ ] Data numbers from `metadata.json` (`summary`, `splits`) in report 3.1 and Table 2
 - [ ] Threshold chosen on validation, documented
-- [ ] Baselines B1, B2 (and B3) on test in Table 3
-- [ ] Segment table on test in Table 4, small segments marked
-- [ ] Test set used once; date and configuration noted
+- [x] Baselines B1, B2 (and B3) on test in Table 3
+- [x] Segment table on test in Table 4, small segments marked
+- [x] Test set used once; date and configuration noted (D-18)

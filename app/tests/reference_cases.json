@@ -13,7 +13,7 @@
     "prev_best_deadlift_kg": 137.5
    },
    "planned_kg": 157.5,
-   "p_fail": 0.6199345384969566
+   "p_fail": 0.6199345384969572
   },
   {
    "context": {
@@ -27,7 +27,7 @@
     "prev_best_deadlift_kg": 245.0
    },
    "planned_kg": 289.0,
-   "p_fail": 0.7108712721665497
+   "p_fail": 0.7108712721665499
   },
   {
    "context": {
@@ -41,7 +41,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 306.1,
-   "p_fail": 0.5153779117872181
+   "p_fail": 0.5153779117872179
   },
   {
    "context": {
@@ -55,7 +55,7 @@
     "prev_best_deadlift_kg": 100.0
    },
    "planned_kg": 112.3,
-   "p_fail": 0.25549918881278116
+   "p_fail": 0.2554991888127815
   },
   {
    "context": {
@@ -83,7 +83,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 120.4,
-   "p_fail": 0.34856350718875595
+   "p_fail": 0.34856350718875617
   },
   {
    "context": {
@@ -97,7 +97,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 198.0,
-   "p_fail": 0.27087936457930106
+   "p_fail": 0.27087936457930123
   },
   {
    "context": {
@@ -111,7 +111,7 @@
     "prev_best_deadlift_kg": 250.0
    },
    "planned_kg": 279.4,
-   "p_fail": 0.6636057844634188
+   "p_fail": 0.6636057844634191
   },
   {
    "context": {
@@ -125,7 +125,7 @@
     "prev_best_deadlift_kg": 265.0
    },
    "planned_kg": 307.2,
-   "p_fail": 0.7277768567019148
+   "p_fail": 0.7277768567019152
   },
   {
    "context": {
@@ -139,7 +139,7 @@
     "prev_best_deadlift_kg": 305.0
    },
    "planned_kg": 289.8,
-   "p_fail": 0.4257611257316099
+   "p_fail": 0.4257611257316101
   },
   {
    "context": {
@@ -153,7 +153,7 @@
     "prev_best_deadlift_kg": 222.5
    },
    "planned_kg": 225.4,
-   "p_fail": 0.4829539127668212
+   "p_fail": 0.48295391276682154
   },
   {
    "context": {
@@ -167,7 +167,7 @@
     "prev_best_deadlift_kg": 102.06
    },
    "planned_kg": 192.7,
-   "p_fail": 0.3251145312019417
+   "p_fail": 0.32511453120194234
   },
   {
    "context": {
@@ -181,7 +181,7 @@
     "prev_best_deadlift_kg": 280.0
    },
    "planned_kg": 294.3,
-   "p_fail": 0.765495376319483
+   "p_fail": 0.7654953763194834
   },
   {
    "context": {
@@ -195,7 +195,7 @@
     "prev_best_deadlift_kg": 72.5
    },
    "planned_kg": 73.5,
-   "p_fail": 0.20931179488701826
+   "p_fail": 0.20931179488701843
   },
   {
    "context": {
@@ -209,7 +209,7 @@
     "prev_best_deadlift_kg": 330.0
    },
    "planned_kg": 357.8,
-   "p_fail": 0.6281968091804795
+   "p_fail": 0.6281968091804799
   },
   {
    "context": {
@@ -237,7 +237,7 @@
     "prev_best_deadlift_kg": 237.5
    },
    "planned_kg": 269.8,
-   "p_fail": 0.7009173917629946
+   "p_fail": 0.7009173917629951
   },
   {
    "context": {
@@ -251,7 +251,7 @@
     "prev_best_deadlift_kg": 137.5
    },
    "planned_kg": 159.3,
-   "p_fail": 0.49530528701199233
+   "p_fail": 0.49530528701199256
   },
   {
    "context": {
@@ -279,7 +279,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 257.5,
-   "p_fail": 0.5818501970338317
+   "p_fail": 0.5818501970338321
   },
   {
    "context": {
@@ -293,7 +293,7 @@
     "prev_best_deadlift_kg": 177.5
    },
    "planned_kg": 177.3,
-   "p_fail": 0.20922216622346754
+   "p_fail": 0.20922216622346784
   },
   {
    "context": {
@@ -307,7 +307,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 227.0,
-   "p_fail": 0.2948340598798446
+   "p_fail": 0.29483405987984485
   },
   {
    "context": {
@@ -321,7 +321,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 134.7,
-   "p_fail": 0.531265961660348
+   "p_fail": 0.5312659616603483
   },
   {
    "context": {
@@ -335,7 +335,7 @@
     "prev_best_deadlift_kg": 212.5
    },
    "planned_kg": 211.8,
-   "p_fail": 0.4071618344682625
+   "p_fail": 0.40716183446826265
   },
   {
    "context": {
@@ -349,7 +349,7 @@
     "prev_best_deadlift_kg": 245.0
    },
    "planned_kg": 236.7,
-   "p_fail": 0.40106985282812446
+   "p_fail": 0.4010698528281247
   },
   {
    "context": {
@@ -363,7 +363,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 226.1,
-   "p_fail": 0.47128052483289695
+   "p_fail": 0.4712805248328971
   },
   {
    "context": {
@@ -377,7 +377,7 @@
     "prev_best_deadlift_kg": 235.0
    },
    "planned_kg": 256.9,
-   "p_fail": 0.5620050392640877
+   "p_fail": 0.5620050392640882
   },
   {
    "context": {
@@ -391,7 +391,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 218.9,
-   "p_fail": 0.4808350835896166
+   "p_fail": 0.480835083589617
   },
   {
    "context": {
@@ -405,7 +405,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 295.5,
-   "p_fail": 0.4987365436466101
+   "p_fail": 0.4987365436466103
   },
   {
    "context": {
@@ -419,7 +419,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 248.1,
-   "p_fail": 0.40619576729538626
+   "p_fail": 0.4061957672953867
   },
   {
    "context": {
@@ -433,7 +433,7 @@
     "prev_best_deadlift_kg": 200.0
    },
    "planned_kg": 225.4,
-   "p_fail": 0.6955393035210495
+   "p_fail": 0.6955393035210496
   },
   {
    "context": {
@@ -461,7 +461,7 @@
     "prev_best_deadlift_kg": 195.0
    },
    "planned_kg": 180.5,
-   "p_fail": 0.39679028607526157
+   "p_fail": 0.39679028607526184
   },
   {
    "context": {
@@ -489,7 +489,7 @@
     "prev_best_deadlift_kg": 260.0
    },
    "planned_kg": 273.2,
-   "p_fail": 0.5597327973836327
+   "p_fail": 0.5597327973836335
   },
   {
    "context": {
@@ -503,7 +503,7 @@
     "prev_best_deadlift_kg": null
    },
    "planned_kg": 249.6,
-   "p_fail": 0.6346702068693143
+   "p_fail": 0.6346702068693146
   },
   {
    "context": {
@@ -517,7 +517,7 @@
     "prev_best_deadlift_kg": 75.0
    },
    "planned_kg": 85.9,
-   "p_fail": 0.17919486283254019
+   "p_fail": 0.17919486283254032
   },
   {
    "context": {
@@ -531,7 +531,7 @@
     "prev_best_deadlift_kg": 155.0
    },
    "planned_kg": 145.5,
-   "p_fail": 0.36726386170082026
+   "p_fail": 0.3672638617008207
   },
   {
    "context": {
@@ -545,7 +545,7 @@
     "prev_best_deadlift_kg": 190.0
    },
    "planned_kg": 204.1,
-   "p_fail": 0.5665520981838416
+   "p_fail": 0.5665520981838417
   },
   {
    "context": {
