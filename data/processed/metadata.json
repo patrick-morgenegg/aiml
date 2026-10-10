@@ -1,0 +1,315 @@
+{
+  "dataset": "deadlift3_attempts",
+  "schema_version": "1.0.0",
+  "created_utc": "2026-10-10T10:06:38+00:00",
+  "notebook": "notebooks/01_data_extraction_and_cleaning.ipynb",
+  "source": {
+    "url": "https://openpowerlifting.gitlab.io/opl-csv/files/openpowerlifting-latest.zip",
+    "kind": "local file (OPL_SOURCE_PATH)",
+    "file": "openpowerlifting-latest.zip",
+    "csv_member": "openpowerlifting-2026-10-10-b55424f4.csv",
+    "snapshot_date": "2026-10-10",
+    "opl_commit": "b55424f4",
+    "file_sha256": "c5d56bb325fe053cfd7fe38627c05b6289b36cdcfba736f601c66fcf80db7866",
+    "file_modified_utc": "2026-10-10T09:46:36+00:00",
+    "license": "Public Domain (OpenPowerlifting data license, LICENSE.txt in the zip)",
+    "attribution": "This project uses data from the OpenPowerlifting project, https://www.openpowerlifting.org."
+  },
+  "parameters": {
+    "date_min": "2015-01-01",
+    "date_max": "2025-12-31",
+    "events": [
+      "SBD"
+    ],
+    "excluded_places": [
+      "NS",
+      "DD"
+    ],
+    "excluded_equipment": [
+      "Straps"
+    ],
+    "sanctioned_only": true,
+    "weight_range_kg": [
+      20.0,
+      500.0
+    ],
+    "squat_range_kg": [
+      10.0,
+      600.0
+    ],
+    "bench_range_kg": [
+      5.0,
+      400.0
+    ],
+    "bodyweight_range_kg": [
+      20.0,
+      300.0
+    ],
+    "age_range_years": [
+      5.0,
+      100.0
+    ],
+    "max_jump_pct": 25.0,
+    "split_ratios": {
+      "train": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "id_salt_source": "project default",
+    "id_salt_fingerprint": "2a21c78a",
+    "sample_size": 5000,
+    "random_seed": 42
+  },
+  "funnel": [
+    {
+      "rule": "C00",
+      "description": "raw OpenPowerlifting rows",
+      "removed": 0,
+      "remaining": 4046411
+    },
+    {
+      "rule": "C01",
+      "description": "meet date within 2015-01-01 … 2025-12-31",
+      "removed": 1441862,
+      "remaining": 2604549
+    },
+    {
+      "rule": "C02",
+      "description": "event in ['SBD'] (squat and bench done before the deadlift)",
+      "removed": 665756,
+      "remaining": 1938793
+    },
+    {
+      "rule": "C03",
+      "description": "sanctioned meets only",
+      "removed": 5158,
+      "remaining": 1933635
+    },
+    {
+      "rule": "C04",
+      "description": "place not in ['NS', 'DD'] (no-show, doping DQ)",
+      "removed": 16865,
+      "remaining": 1916770
+    },
+    {
+      "rule": "C05",
+      "description": "equipment not in ['Straps']",
+      "removed": 1,
+      "remaining": 1916769
+    },
+    {
+      "rule": "C06",
+      "description": "2nd and 3rd deadlift attempt recorded (attempt-level data)",
+      "removed": 953557,
+      "remaining": 963212
+    },
+    {
+      "rule": "C07",
+      "description": "valid best squat and bench (lifter still in the meet at decision time)",
+      "removed": 20034,
+      "remaining": 943178
+    },
+    {
+      "rule": "C08",
+      "description": "bodyweight recorded and within (20.0, 300.0) kg",
+      "removed": 196,
+      "remaining": 942982
+    },
+    {
+      "rule": "C09",
+      "description": "attempt, squat and bench weights within plausible ranges",
+      "removed": 80,
+      "remaining": 942902
+    },
+    {
+      "rule": "C10",
+      "description": "attempt progression consistent (no decrease, increase after a good lift)",
+      "removed": 2,
+      "remaining": 942900
+    },
+    {
+      "rule": "C11",
+      "description": "jump to 3rd attempt ≤ 25 %",
+      "removed": 1325,
+      "remaining": 941575
+    },
+    {
+      "rule": "C12",
+      "description": "one row per lifter and meet (drop duplicate division entries)",
+      "removed": 62110,
+      "remaining": 879465
+    },
+    {
+      "rule": "C13",
+      "description": "label defined (3rd attempt good or failed)",
+      "removed": 0,
+      "remaining": 879465
+    }
+  ],
+  "summary": {
+    "period": "2015-01-01 – 2025-12-30",
+    "records_after_cleaning": 879465,
+    "athletes_after_cleaning": 343047,
+    "failed_third_attempt_share": 0.3872,
+    "snapshot": "2026-10-10 (commit b55424f4)",
+    "label_positive_class": "dl3_failed = 1 (3rd attempt fails)"
+  },
+  "splits": {
+    "train": {
+      "athletes": 240340,
+      "records": 616069,
+      "fail_rate": 0.3875
+    },
+    "validation": {
+      "athletes": 51399,
+      "records": 131443,
+      "fail_rate": 0.386
+    },
+    "test": {
+      "athletes": 51308,
+      "records": 131953,
+      "fail_rate": 0.3872
+    }
+  },
+  "category_levels": {
+    "equipment": [
+      "Raw",
+      "Wraps",
+      "Single-ply",
+      "Multi-ply",
+      "Unlimited"
+    ],
+    "age_class_group": [
+      "Sub-Junior",
+      "Junior",
+      "Open",
+      "Masters",
+      "Unknown"
+    ],
+    "sex": [
+      "M",
+      "F",
+      "Mx"
+    ]
+  },
+  "feature_ranges_train": {
+    "dl3_weight_kg": {
+      "min": 25.0,
+      "p01": 82.5,
+      "median": 202.5,
+      "p99": 336.23479999998005,
+      "max": 470.0
+    },
+    "dl2_weight_kg": {
+      "min": 20.4,
+      "p01": 75.0,
+      "median": 192.5,
+      "p99": 325.0,
+      "max": 460.0
+    },
+    "dl2_success": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 1.0,
+      "p99": 1.0,
+      "max": 1.0
+    },
+    "dl3_jump_pct": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 4.48,
+      "p99": 15.0,
+      "max": 25.0
+    },
+    "bodyweight_kg": {
+      "min": 20.0,
+      "p01": 46.6268,
+      "median": 81.43,
+      "p99": 146.55,
+      "max": 285.0
+    },
+    "best_squat_kg": {
+      "min": 10.0,
+      "p01": 57.5,
+      "median": 170.0,
+      "p99": 335.0,
+      "max": 552.5
+    },
+    "best_bench_kg": {
+      "min": 6.8,
+      "p01": 35.0,
+      "median": 110.0,
+      "p99": 225.0,
+      "max": 396.89
+    },
+    "dl3_jump_kg": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 7.5,
+      "p99": 25.0,
+      "max": 90.0
+    },
+    "dl1_weight_kg": {
+      "min": 20.0,
+      "p01": 67.5,
+      "median": 180.0,
+      "p99": 307.5,
+      "max": 449.06
+    },
+    "dl1_success": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 1.0,
+      "p99": 1.0,
+      "max": 1.0
+    },
+    "dl2_jump_pct": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 6.52,
+      "p99": 20.0,
+      "max": 1362.5
+    },
+    "dl3_to_bodyweight": {
+      "min": 0.2877,
+      "p01": 1.150568,
+      "median": 2.4341,
+      "p99": 3.823031999999995,
+      "max": 7.1878
+    },
+    "dl3_to_best_squat": {
+      "min": 0.0758,
+      "p01": 0.8451,
+      "median": 1.175,
+      "p99": 1.7344,
+      "max": 15.1
+    },
+    "age_years": {
+      "min": 5.0,
+      "p01": 14.0,
+      "median": 25.5,
+      "p99": 67.0,
+      "max": 93.5
+    },
+    "prev_best_deadlift_kg": {
+      "min": 20.41,
+      "p01": 83.91,
+      "median": 207.5,
+      "p99": 340.0,
+      "max": 457.5
+    },
+    "prev_meets_count": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 2.0,
+      "p99": 46.0,
+      "max": 201.0
+    }
+  },
+  "files": {
+    "parquet": "data/processed/deadlift3_attempts.parquet",
+    "csv": "data/processed/deadlift3_attempts.csv",
+    "sample_csv": "data/sample/deadlift3_attempts_sample.csv",
+    "schema": "docs/specs/dataset_schema.json"
+  }
+}
