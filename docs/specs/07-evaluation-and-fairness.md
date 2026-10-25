@@ -103,6 +103,18 @@ Test agrees with validation within 0.01 everywhere. Segments: men recall 0.79 vs
 Sub-Juniors 0.60, Masters 0.61, Single-ply 0.86, Multi-ply 0.90; Mx (36 rows, 6 failures) and Unlimited too small.
 Full table: `app/model/model.json` → `segments_test`.
 
+## Model v2 and the 2026 time hold-out (decisions D-19, D-20)
+
+`notebooks/04_model_v2.ipynb`, card `models/model_v2_card.json`. Gradient boosting, monotone in the planned weight,
+with DL1 weight/result, jump DL1→DL2 and number of earlier meets as extra inputs; chosen on validation only.
+
+| | Validation precision / recall / PR-AUC | 2026 hold-out precision / recall / PR-AUC |
+|---|---|---|
+| v1 logistic regression | 0.48 / 0.70 / 0.55 | 0.49 / 0.72 / 0.56 |
+| **v2 gradient boosting** | **0.49 / 0.70 / 0.57** | **0.50 / 0.72 / 0.58** |
+
+Validation segments for v2: recall women 0.54 (v1 0.49), men 0.77 (v1 0.79) – the gap shrinks from 30 to 22 points.
+
 ## Reporting checklist
 
 - [ ] Data numbers from `metadata.json` (`summary`, `splits`) in report 3.1 and Table 2

@@ -1,0 +1,241 @@
+{
+  "model_version": "gbm-monotone-v2",
+  "chosen": "GBM + new features, 31 leaves, min leaf 200, 825 trees",
+  "config": {
+    "extra": true,
+    "leaves": 31,
+    "msl": 200,
+    "iters": 825
+  },
+  "features": [
+    "dl2_success",
+    "rel_strength",
+    "log_bodyweight",
+    "squat_ratio",
+    "bench_ratio",
+    "has_prev_best",
+    "pb_gap",
+    "equipment_Wraps",
+    "equipment_Single-ply",
+    "equipment_Multi-ply",
+    "equipment_Unlimited",
+    "age_Sub-Junior",
+    "age_Junior",
+    "age_Masters",
+    "age_Unknown",
+    "jump",
+    "pr_excess",
+    "has_dl1",
+    "dl1_success",
+    "jump12",
+    "log_prev_meets"
+  ],
+  "monotone_features": [
+    "jump",
+    "pr_excess"
+  ],
+  "selection_rule": "D-19: validation PR-AUC >= v1 + 0.005, monotone, calibrated within 2 points, coach-providable inputs",
+  "candidates_validation": [
+    {
+      "candidate": "GBM + new features, 31 leaves, min leaf 200, 825 trees",
+      "pr_auc_val": 0.5693,
+      "vs_v1": 0.0186
+    },
+    {
+      "candidate": "GBM + new features, 63 leaves, min leaf 200, 425 trees",
+      "pr_auc_val": 0.5692,
+      "vs_v1": 0.0186
+    },
+    {
+      "candidate": "GBM + new features, 63 leaves, min leaf 1000, 300 trees",
+      "pr_auc_val": 0.5687,
+      "vs_v1": 0.018
+    },
+    {
+      "candidate": "GBM + new features, 127 leaves, min leaf 500, 225 trees",
+      "pr_auc_val": 0.5687,
+      "vs_v1": 0.018
+    },
+    {
+      "candidate": "GBM v1 features, 63 leaves, min leaf 200, 200 trees",
+      "pr_auc_val": 0.5625,
+      "vs_v1": 0.0118
+    },
+    {
+      "candidate": "LR v1 + new features",
+      "pr_auc_val": 0.5536,
+      "vs_v1": 0.003
+    }
+  ],
+  "checks": {
+    "(a) PR-AUC gain ≥ 0.005": 0.0186,
+    "(b) monotonicity violations = 0": 0,
+    "(c) max calibration gap ≤ 0.02": 0.0117,
+    "(d) inputs known to the coach": "yes (section 1)"
+  },
+  "threshold": 0.3496,
+  "validation": {
+    "v1": {
+      "precision": 0.4831,
+      "recall": 0.7002,
+      "pr_auc": 0.5507,
+      "roc_auc": 0.665,
+      "n": 131443.0
+    },
+    "v2": {
+      "precision": 0.4925,
+      "recall": 0.7,
+      "pr_auc": 0.5693,
+      "roc_auc": 0.6775,
+      "n": 131443.0
+    }
+  },
+  "segments_validation": [
+    {
+      "segment": "sex",
+      "value": "M",
+      "n": 87031,
+      "failed": 35714,
+      "precision": 0.4985,
+      "recall": 0.7663
+    },
+    {
+      "segment": "sex",
+      "value": "F",
+      "n": 44396,
+      "failed": 15017,
+      "precision": 0.4737,
+      "recall": 0.5422
+    },
+    {
+      "segment": "sex",
+      "value": "Mx",
+      "n": 16,
+      "failed": 3,
+      "precision": 0.1667,
+      "recall": 0.3333
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Sub-Junior",
+      "n": 16791,
+      "failed": 5918,
+      "precision": 0.4797,
+      "recall": 0.5945
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Junior",
+      "n": 32806,
+      "failed": 13085,
+      "precision": 0.4951,
+      "recall": 0.731
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Open",
+      "n": 52693,
+      "failed": 21207,
+      "precision": 0.4988,
+      "recall": 0.7389
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Masters",
+      "n": 20354,
+      "failed": 7157,
+      "precision": 0.4734,
+      "recall": 0.6285
+    },
+    {
+      "segment": "age_class_group",
+      "value": "Unknown",
+      "n": 8799,
+      "failed": 3367,
+      "precision": 0.499,
+      "recall": 0.6718
+    },
+    {
+      "segment": "equipment",
+      "value": "Raw",
+      "n": 105004,
+      "failed": 39347,
+      "precision": 0.4897,
+      "recall": 0.6721
+    },
+    {
+      "segment": "equipment",
+      "value": "Wraps",
+      "n": 16757,
+      "failed": 7008,
+      "precision": 0.4988,
+      "recall": 0.7683
+    },
+    {
+      "segment": "equipment",
+      "value": "Single-ply",
+      "n": 8547,
+      "failed": 3814,
+      "precision": 0.4977,
+      "recall": 0.834
+    },
+    {
+      "segment": "equipment",
+      "value": "Multi-ply",
+      "n": 1015,
+      "failed": 504,
+      "precision": 0.5526,
+      "recall": 0.8968
+    },
+    {
+      "segment": "equipment",
+      "value": "Unlimited",
+      "n": 120,
+      "failed": 61,
+      "precision": 0.5393,
+      "recall": 0.7869
+    }
+  ],
+  "holdout_2026": {
+    "evaluated_utc": "2026-10-25T19:02:49+00:00",
+    "period": "2026-01-02 – 2026-10-04",
+    "base_rate": 0.3992,
+    "results": {
+      "v1": {
+        "precision": 0.4926,
+        "recall": 0.7159,
+        "pr_auc": 0.5622,
+        "roc_auc": 0.6645,
+        "n": 81900.0
+      },
+      "v2": {
+        "precision": 0.5002,
+        "recall": 0.7192,
+        "pr_auc": 0.5821,
+        "roc_auc": 0.6768,
+        "n": 81900.0
+      },
+      "B3 fails if 2nd attempt failed": {
+        "precision": 0.6187,
+        "recall": 0.172,
+        "pr_auc": 0.437,
+        "roc_auc": null,
+        "n": 81900.0
+      },
+      "v1 (athletes not in train)": {
+        "precision": 0.4895,
+        "recall": 0.7186,
+        "pr_auc": 0.5553,
+        "roc_auc": 0.6646,
+        "n": 24500.0
+      },
+      "v2 (athletes not in train)": {
+        "precision": 0.495,
+        "recall": 0.7189,
+        "pr_auc": 0.5765,
+        "roc_auc": 0.6764,
+        "n": 24500.0
+      }
+    }
+  }
+}

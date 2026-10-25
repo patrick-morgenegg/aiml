@@ -108,3 +108,13 @@ v2 result was looked at:
   (`OPL_DATE_MIN=2026-01-01`, export `holdout_2026`, same cleaning rules; 81,900 attempts, 2026-01-02 … 2026-10-04).
   Reported as is, also if v2 is not better there. The 2015–2025 test split is not used for v2.
 
+### D-20 v2 chosen and compared on the 2026 hold-out (2026-10-25)
+Notebook 04, rules of D-19. Candidates on validation (PR-AUC; v1 0.551): logistic regression + new features 0.554
+(+0.003, fails the +0.005 rule); gradient boosting with v1 features 0.563; **gradient boosting + new features 0.569**
+(31 leaves, min. 200 per leaf, 825 trees, learning rate 0.05, monotone in `jump` and `pr_excess`). Checks: gain +0.019,
+0 monotonicity violations, max. calibration gap 0.012, new inputs DL1 weight/result and number of earlier meets
+(leakage checklist passed). Threshold 0.3496 (recall ≥ 0.70 on validation).
+2026 hold-out, evaluated once 2026-10-25 19:02 UTC (81,900 attempts, 39.9 % failed): v1 precision 0.49 / recall 0.72 /
+PR-AUC 0.56; **v2 0.50 / 0.72 / 0.58**; same order for athletes never seen in training (24,500 attempts).
+→ v2 is the better model. The app still runs v1 until it gets the two extra inputs and a tree evaluator (open task).
+
