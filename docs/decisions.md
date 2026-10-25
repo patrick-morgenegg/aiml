@@ -96,3 +96,15 @@ the training run), threshold 0.3541 from validation. Evaluated once on 2026-10-1
 → The test set is now used. Any later change to features, model or threshold must be reported as such
 (spec 06, rule 4); `EVALUATE_TEST` stays `True` so re-runs of this model reproduce the same numbers.
 
+### D-19 Model v2: pre-registered selection rule and a fresh time hold-out (2026-10-25)
+The test split was used once for v1 (D-18), so it cannot also pick between v1 and v2. Written down **before** any
+v2 result was looked at:
+- v2 is developed on train and chosen on validation only. Primary criterion: **PR-AUC on validation**.
+- v2 replaces v1 only if (a) validation PR-AUC ≥ v1 + 0.005, (b) the risk never decreases with the planned weight
+  (0 violations in the 2,000-situation sweep), (c) calibration stays within 2 points in every validation decile, and
+  (d) every input is known to the coach at the decision point (leakage checklist, spec 05).
+- Threshold rule unchanged: highest precision with recall ≥ 0.70 on validation.
+- Final comparison, once: v1 and v2 on a **time hold-out** of all 2026 meets in snapshot `b55424f4`
+  (`OPL_DATE_MIN=2026-01-01`, export `holdout_2026`, same cleaning rules; 81,900 attempts, 2026-01-02 … 2026-10-04).
+  Reported as is, also if v2 is not better there. The 2015–2025 test split is not used for v2.
+
