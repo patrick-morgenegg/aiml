@@ -47,6 +47,7 @@ Details: [docs/specs/07-evaluation-and-fairness.md](docs/specs/07-evaluation-and
 ```
 notebooks/01_data_extraction_and_cleaning.ipynb   extract → clean → features → pseudonymise → split → export
 notebooks/02_model_training.ipynb                  monotone logistic regression → app/model/model.json
+notebooks/03_confusion_matrix.ipynb                confusion matrix of the frozen model on test → docs/figures/
 app/                                               Third Attempt Planner (static HTML + JS, works from disk)
 scripts/validate_dataset.py                        checks any export against the dataset contract
 data/raw/                                          downloaded OpenPowerlifting zip (git-ignored)
