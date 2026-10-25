@@ -1,7 +1,10 @@
 /*
  * Prediction logic for the Third Attempt Planner. Pure functions, no DOM access.
- * Mirrors make_features() / predict() in notebooks/02_model_training.ipynb; app/tests/model.test.js checks both
- * give the same probabilities. Works as a classic browser script (window.DeadliftModel) and in Node (require).
+ * Two model kinds, chosen by the model card:
+ *   - "gbm" (v2, in use): gradient-boosted trees, notebooks/04_model_v2.ipynb (v2_features / predict_from_trees)
+ *   - logistic regression (v1, baseline): notebooks/02_model_training.ipynb (make_features / predict)
+ * app/tests/model.test.js checks that both reproduce the Python probabilities.
+ * Works as a classic browser script (window.DeadliftModel) and in Node (require).
  */
 (function (root, factory) {
   const api = factory();
@@ -12,13 +15,16 @@
 
   const BAR_AND_COLLARS_KG = 25; // IPF: 20 kg bar + 2 x 2.5 kg collars
   const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25, 0.5, 0.25];
-  const NUMERIC_INPUTS = ["dl2_weight_kg", "bodyweight_kg", "best_squat_kg", "best_bench_kg"];
+  const OPTIONAL_INPUTS = ["prev_best_deadlift_kg"];
+  const COUNT_INPUTS = ["prev_meets_count"];
   const LABELS = {
+    dl1_weight_kg: "1st attempt weight",
     dl2_weight_kg: "2nd attempt weight",
     bodyweight_kg: "Bodyweight",
     best_squat_kg: "Best squat today",
     best_bench_kg: "Best bench today",
     prev_best_deadlift_kg: "Previous best deadlift",
+    prev_meets_count: "Number of earlier competitions",
     rel_strength: "2nd attempt relative to bodyweight",
     squat_ratio: "Squat relative to the 2nd deadlift",
     bench_ratio: "Bench relative to the 2nd deadlift",
@@ -28,8 +34,50 @@
   const clip = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
   const hasValue = (v) => v !== null && v !== undefined && v !== "" && !Number.isNaN(v);
 
+  const isGbm = (model) => model.model_kind === "gbm";
+
   /** Model features for one planned 3rd-attempt weight. Returns {featureName: value}. */
   function features(model, ctx, plannedKg) {
+    return isGbm(model) ? featuresV2(model, ctx, plannedKg) : featuresV1(model, ctx, plannedKg);
+  }
+
+  /** v2: same inputs as v1 plus the 1st attempt and the number of earlier competitions (notebook 04, v2_features). */
+  function featuresV2(model, ctx, plannedKg) {
+    const s = ctx.dl2_success ? 1 : 0;
+    const dl2 = ctx.dl2_weight_kg;
+    const hasPb = hasValue(ctx.prev_best_deadlift_kg);
+    const pb = hasPb ? ctx.prev_best_deadlift_kg : 1;
+    const gapClip = model.constants.pb_gap_clip;
+    const gap = hasPb ? clip(Math.log(dl2 / pb), -gapClip, gapClip) : 0;
+    const hasDl1 = hasValue(ctx.dl1_weight_kg);
+    const [j12lo, j12hi] = model.constants.jump12_clip;
+    const x = {
+      dl2_success: s,
+      rel_strength: Math.log(dl2 / ctx.bodyweight_kg),
+      log_bodyweight: Math.log(ctx.bodyweight_kg),
+      squat_ratio: Math.log(ctx.best_squat_kg / dl2),
+      bench_ratio: Math.log(ctx.best_bench_kg / dl2),
+      has_prev_best: hasPb ? 1 : 0,
+      pb_gap: gap,
+    };
+    const cats = model.categories;
+    for (const level of cats.equipment) {
+      if (level !== cats.equipment_baseline) x["equipment_" + level] = ctx.equipment === level ? 1 : 0;
+    }
+    for (const level of cats.age_class_group) {
+      if (level !== cats.age_baseline) x["age_" + level] = ctx.age_class_group === level ? 1 : 0;
+    }
+    x.jump = Math.log(plannedKg / dl2);
+    x.pr_excess = hasPb ? Math.max(0, Math.log(plannedKg / pb)) - Math.max(0, Math.log(dl2 / pb)) : 0;
+    x.has_dl1 = hasDl1 ? 1 : 0;
+    x.dl1_success = hasDl1 ? (ctx.dl1_success ? 1 : 0) : 1;
+    x.jump12 = hasDl1 ? clip(Math.log(dl2 / ctx.dl1_weight_kg), j12lo, j12hi) : 0;
+    x.log_prev_meets = Math.log1p(ctx.prev_meets_count);
+    return x;
+  }
+
+  /** v1: logistic-regression features (notebook 02, make_features). */
+  function featuresV1(model, ctx, plannedKg) {
     const s = ctx.dl2_success ? 1 : 0;
     const dl2 = ctx.dl2_weight_kg;
     const hasPb = hasValue(ctx.prev_best_deadlift_kg);
@@ -68,6 +116,7 @@
   /** Probability that the 3rd attempt fails at plannedKg. */
   function predict(model, ctx, plannedKg) {
     const x = features(model, ctx, plannedKg);
+    if (isGbm(model)) return predictTrees(model, x);
     let z = model.intercept;
     for (const [name, coef] of Object.entries(model.coefficients)) {
       if (!(name in x)) throw new Error("feature not computed: " + name);
@@ -76,7 +125,30 @@
     return 1 / (1 + Math.exp(-z));
   }
 
+  /**
+   * Gradient-boosted trees: sigmoid(baseline + sum of one leaf value per tree). Go left if value <= threshold.
+   * Features are first rounded to `feature_rounding_decimals` (same formula as notebook 04, decision D-21), so a
+   * last-bit difference between the browser's and numpy's logarithm cannot send a case down another branch.
+   */
+  function predictTrees(model, x) {
+    const scale = Math.pow(10, model.feature_rounding_decimals);
+    const vec = model.features.map((f) => {
+      const v = x[f.name];
+      if (typeof v !== "number" || Number.isNaN(v)) throw new Error("feature not computed: " + f.name);
+      return Math.floor(v * scale + 0.5) / scale;
+    });
+    let raw = model.baseline;
+    for (const tree of model.trees) {
+      let node = 0;
+      while (tree.f[node] >= 0) node = vec[tree.f[node]] <= tree.t[node] ? tree.l[node] : tree.r[node];
+      raw += tree.v[node];
+    }
+    return 1 / (1 + Math.exp(-raw));
+  }
+
   const fmtKg = (v) => `${Number(v.toFixed(2))} kg`;
+  const unit = (name) => (COUNT_INPUTS.includes(name) ? "" : " kg");
+  const fmtValue = (name, v) => (COUNT_INPUTS.includes(name) ? String(v) : fmtKg(v));
 
   /**
    * Check an attempt context. errors: {field: message} – blocking. notes: [message] – inputs outside the range
@@ -86,28 +158,43 @@
     const errors = {};
     const notes = [];
     const bounds = model.input_bounds;
-    for (const name of [...NUMERIC_INPUTS, "prev_best_deadlift_kg"]) {
+    const inputs = Object.keys(bounds);
+    for (const name of inputs) {
       const v = ctx[name];
-      const optional = name === "prev_best_deadlift_kg";
+      const optional = OPTIONAL_INPUTS.includes(name);
       if (!hasValue(v)) {
-        if (!optional) errors[name] = `Enter the ${LABELS[name].toLowerCase()} in kg.`;
+        if (!optional) errors[name] = COUNT_INPUTS.includes(name) ? `Enter the ${LABELS[name].toLowerCase()} (0 for a first competition).`
+          : `Enter the ${LABELS[name].toLowerCase()} in kg.`;
         continue;
       }
       if (typeof v !== "number" || !Number.isFinite(v)) {
         errors[name] = `${LABELS[name]} must be a number.`;
+      } else if (COUNT_INPUTS.includes(name) && !Number.isInteger(v)) {
+        errors[name] = `${LABELS[name]} must be a whole number.`;
       } else if (v < bounds[name].min || v > bounds[name].max) {
-        errors[name] = `${LABELS[name]} must be between ${bounds[name].min} and ${bounds[name].max} kg.`;
+        errors[name] = `${LABELS[name]} must be between ${bounds[name].min} and ${bounds[name].max}${unit(name)}.`;
       }
     }
     if (typeof ctx.dl2_success !== "boolean") errors.dl2_success = "Choose whether the 2nd attempt was good.";
+    if (inputs.includes("dl1_weight_kg")) {
+      if (typeof ctx.dl1_success !== "boolean") errors.dl1_success = "Choose whether the 1st attempt was good.";
+      // Rules of the sport (cleaning rule C10): the bar never gets lighter, and after a good lift it must get heavier.
+      if (!errors.dl1_weight_kg && !errors.dl2_weight_kg && hasValue(ctx.dl1_weight_kg) && hasValue(ctx.dl2_weight_kg)) {
+        if (ctx.dl1_weight_kg > ctx.dl2_weight_kg) errors.dl1_weight_kg = "The 1st attempt cannot be heavier than the 2nd.";
+        else if (ctx.dl1_success === true && ctx.dl1_weight_kg === ctx.dl2_weight_kg) {
+          errors.dl2_weight_kg = "After a good 1st attempt the 2nd must be heavier.";
+        }
+      }
+    }
     if (!model.categories.equipment.includes(ctx.equipment)) errors.equipment = "Choose an equipment category.";
     if (!model.categories.age_class_group.includes(ctx.age_class_group)) errors.age_class_group = "Choose an age group.";
     if (Object.keys(errors).length) return { errors, notes };
 
-    for (const name of NUMERIC_INPUTS.concat(hasValue(ctx.prev_best_deadlift_kg) ? ["prev_best_deadlift_kg"] : [])) {
+    for (const name of inputs) {
       const t = model.input_typical[name];
+      if (!t || !hasValue(ctx[name])) continue;
       if (ctx[name] < t.p01 || ctx[name] > t.p99) {
-        notes.push(`${LABELS[name]} (${fmtKg(ctx[name])}) is outside the usual range of ${t.p01}–${t.p99} kg.`);
+        notes.push(`${LABELS[name]} (${fmtValue(name, ctx[name])}) is outside the usual range of ${t.p01}–${t.p99}${unit(name)}.`);
       }
     }
     const x = features(model, ctx, ctx.dl2_weight_kg);

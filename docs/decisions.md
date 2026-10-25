@@ -116,5 +116,23 @@ Notebook 04, rules of D-19. Candidates on validation (PR-AUC; v1 0.551): logisti
 (leakage checklist passed). Threshold 0.3496 (recall ≥ 0.70 on validation).
 2026 hold-out, evaluated once 2026-10-25 19:02 UTC (81,900 attempts, 39.9 % failed): v1 precision 0.49 / recall 0.72 /
 PR-AUC 0.56; **v2 0.50 / 0.72 / 0.58**; same order for athletes never seen in training (24,500 attempts).
-→ v2 is the better model. The app still runs v1 until it gets the two extra inputs and a tree evaluator (open task).
+→ v2 is the better model. (Taken over into the app by D-21.)
+
+### D-21 The app runs v2; features rounded to 9 decimals before the trees (2026-10-25)
+- The Third Attempt Planner now runs v2. New inputs: 1st attempt weight and result, number of earlier competitions
+  (any event, 0 for a first competition). Same attempt rules as for DL2 (DL1 ≤ DL2; after a good DL1 the 2nd attempt
+  must be heavier). Notebook 04 (section 6) exports the trees to `app/model/model.json` + `model-data.js` and
+  40 reference cases; `js/model.js` evaluates them. v1 stays as `app/model/model_v1.json` (+ `reference_cases_v1.json`,
+  still tested); notebook 02 writes only that file now, notebook 03 reads it.
+- Why rounding: mathematically equal ratios (e.g. 125/54.1 and 250/108.2) differ in the last bit, some of the 825
+  trees split exactly between them, and numpy and the browser's `Math.log` round the last bit differently. Without
+  rounding, 2 of 40 reference cases differed by up to 0.004. The deployed rule is `floor(x · 1e9 + 0.5) / 1e9` for every
+  feature, in notebook 04 and in `js/model.js`; the trees are unchanged (not refitted). Stable under ±1 ulp in 100 %
+  of validation rows; Python and JS now agree to 1e-9.
+- Effect, validation only: threshold re-chosen by the same rule, 0.3496 → **0.349**; precision 0.4925 → 0.4922,
+  recall 0.7000, PR-AUC 0.5693 → 0.5691; D-19 checks still hold (gain +0.018, 0 monotonicity violations, calibration
+  gap 0.013).
+- The 2026 hold-out was re-run once for this deployed variant (nothing chosen on it): v2 precision 0.4996 / recall
+  0.7190 / PR-AUC 0.5819 (before rounding 0.5002 / 0.7192 / 0.5821; v1 0.4926 / 0.7159 / 0.5622). Both runs are in
+  `models/model_v2_card.json` (`holdout_2026`, `holdout_2026_history`); rounded to two decimals nothing changes.
 

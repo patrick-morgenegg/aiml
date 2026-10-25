@@ -6,7 +6,8 @@
   const M = window.DeadliftModel;
   const $ = (id) => document.getElementById(id);
   const STORAGE_KEY = "third-attempt-planner.log.v1";
-  const NUMERIC = ["dl2_weight_kg", "prev_best_deadlift_kg", "best_squat_kg", "best_bench_kg", "bodyweight_kg"];
+  const NUMERIC = ["dl1_weight_kg", "dl2_weight_kg", "prev_best_deadlift_kg", "best_squat_kg", "best_bench_kg",
+    "bodyweight_kg", "prev_meets_count"];
   const PRESETS = { extra: [0.02, 0.05, 0.1], absolute: [0.3, 0.4, 0.5] };
   const SLIDER = { extra: { min: 0, max: 15, step: 0.5 }, absolute: { min: 15, max: 80, step: 1 } };
   const limits = { extra: 0.05, absolute: Math.round(MODEL.threshold * 100) / 100 };
@@ -43,8 +44,10 @@
       const raw = $(name).value.trim();
       ctx[name] = raw === "" ? null : Number(raw);
     }
-    const s = document.querySelector('input[name="dl2_success"]:checked');
-    ctx.dl2_success = s ? s.value === "1" : undefined;
+    for (const name of ["dl1_success", "dl2_success"]) {
+      const s = document.querySelector(`input[name="${name}"]:checked`);
+      ctx[name] = s ? s.value === "1" : undefined;
+    }
     ctx.equipment = $("equipment").value;
     ctx.age_class_group = $("age_class_group").value;
     return ctx;
@@ -65,7 +68,7 @@
   }
 
   function showFieldErrors(errors) {
-    for (const name of [...NUMERIC, "dl2_success", "equipment", "age_class_group"]) {
+    for (const name of [...NUMERIC, "dl1_success", "dl2_success", "equipment", "age_class_group"]) {
       const msg = touched.has(name) || touched.has("*") ? errors[name] || "" : "";
       $("err-" + name).textContent = msg;
       const field = $("err-" + name).closest(".field");
@@ -237,9 +240,10 @@
     const p = M.predict(MODEL, ctx, w);
     log.unshift({
       logged_at: new Date().toISOString(),
+      dl1_weight_kg: ctx.dl1_weight_kg, dl1_success: ctx.dl1_success,
       dl2_weight_kg: ctx.dl2_weight_kg, dl2_success: ctx.dl2_success, bodyweight_kg: ctx.bodyweight_kg,
       best_squat_kg: ctx.best_squat_kg, best_bench_kg: ctx.best_bench_kg, prev_best_deadlift_kg: ctx.prev_best_deadlift_kg,
-      equipment: ctx.equipment, age_class_group: ctx.age_class_group,
+      prev_meets_count: ctx.prev_meets_count, equipment: ctx.equipment, age_class_group: ctx.age_class_group,
       limit_mode: result.mode, limit_setting: limits[result.mode], limit_risk: round4(result.limit_risk),
       suggested_kg: result.suggestion ? result.suggestion.weight_kg : null,
       declared_kg: w, p_fail_declared: round4(p), override: p > result.limit_risk + 1e-12,
@@ -257,7 +261,8 @@
       const declared = `${kgText(e.declared_kg)}${e.override ? " " + pill("warn", "warn", "Override") : ""}`;
       const btn = (value, cls, label) =>
         `<button type="button" class="${cls}" data-i="${i}" data-outcome="${value}" aria-pressed="${e.outcome === value}">${label}</button>`;
-      return `<tr><td>${esc(when)}</td><td>${kgText(e.dl2_weight_kg)} ${e.dl2_success ? "good" : "miss"}</td>` +
+      const dl1 = e.dl1_weight_kg === undefined || e.dl1_weight_kg === null ? "" : `${kgText(e.dl1_weight_kg)} ${e.dl1_success ? "good" : "miss"} · `;
+      return `<tr><td>${esc(when)}</td><td>${dl1}${kgText(e.dl2_weight_kg)} ${e.dl2_success ? "good" : "miss"}</td>` +
         `<td>${e.suggested_kg === null ? "–" : kgText(e.suggested_kg)}</td><td>${declared}</td><td class="num">${pct(e.p_fail_declared)}</td>` +
         `<td><span class="outcome">${btn("good", "good", "Good lift")}${btn("no_lift", "miss", "No lift")}</span></td></tr>`;
     }).join("");
@@ -267,8 +272,8 @@
   }
 
   function toCsv() {
-    const cols = ["logged_at", "dl2_weight_kg", "dl2_success", "bodyweight_kg", "best_squat_kg", "best_bench_kg",
-      "prev_best_deadlift_kg", "equipment", "age_class_group", "limit_mode", "limit_setting", "limit_risk",
+    const cols = ["logged_at", "dl1_weight_kg", "dl1_success", "dl2_weight_kg", "dl2_success", "bodyweight_kg", "best_squat_kg",
+      "best_bench_kg", "prev_best_deadlift_kg", "prev_meets_count", "equipment", "age_class_group", "limit_mode", "limit_setting", "limit_risk",
       "suggested_kg", "declared_kg", "p_fail_declared", "override", "outcome", "model_version"];
     const cell = (v) => (v === null || v === undefined ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
     return [cols.join(","), ...log.slice().reverse().map((e) => cols.map((c) => cell(e[c])).join(","))].join("\n");
@@ -306,19 +311,24 @@
 
   // ---------- model & data ----------
   function renderModelCard() {
-    const d = MODEL.dataset, v = MODEL.metrics.validation, t = MODEL.metrics.test;
+    const d = MODEL.dataset, v = MODEL.metrics.validation, t = MODEL.metrics.test, h = MODEL.metrics.holdout_2026;
+    const h1 = MODEL.comparison_v1 && MODEL.comparison_v1.holdout_2026;
     // After the one-time test evaluation (notebook 02, section 6) the tables show the test split.
     const onTest = Boolean(t && MODEL.baselines_test && MODEL.segments_test);
     const splitName = onTest ? "test split" : "validation split";
     const n = (x) => Number(x).toLocaleString("en-US");
     const f2 = (x) => (x === null || x === undefined ? "–" : Number(x).toFixed(2));
-    $("model-lede").textContent = `Logistic regression trained on ${n(d.train_records)} third deadlift attempts by ` +
+    $("model-lede").textContent = `${MODEL.display_name || "Logistic regression"} trained on ${n(d.train_records)} third deadlift attempts by ` +
       `${n(d.train_athletes)} athletes (OpenPowerlifting, ${d.period}, snapshot ${d.snapshot_date}). ` +
       "Its predicted risk can only rise when the declared weight rises.";
     $("metrics-note").textContent = `Validation split: ${n(v.n)} attempts, ${pct(v.base_rate)} of them failed. ` +
       `Warning at ${pct(v.threshold)} or more: the model catches ${pct(v.recall)} of failed attempts, and ` +
       `${pct(v.precision)} of its warnings are failed attempts. ` +
-      (t ? `Test split (${n(t.n)} attempts, evaluated once on ${t.evaluated_utc.slice(0, 10)} with the frozen model): ` +
+      (h ? `Time hold-out (all ${n(h.n)} attempts of ${h.period.slice(0, 4)}, after the training period; evaluated once on ` +
+          `${h.evaluated_utc.slice(0, 10)}): precision ${f2(h.precision)}, recall ${f2(h.recall)}, PR-AUC ${f2(h.pr_auc)}` +
+          (h1 ? ` – the previous model v1 reached ${f2(h1.precision)}, ${f2(h1.recall)} and ${f2(h1.pr_auc)} there.` : ".") +
+          ` The table below shows the ${splitName}.`
+       : t ? `Test split (${n(t.n)} attempts, evaluated once on ${t.evaluated_utc.slice(0, 10)} with the frozen model): ` +
           `precision ${f2(t.precision)}, recall ${f2(t.recall)}, PR-AUC ${f2(t.pr_auc)}. The table below shows the ${splitName}.`
          : "The test split is kept for the final evaluation and has not been used yet.");
     const rows = Object.entries(onTest ? MODEL.baselines_test : MODEL.baselines_validation).map(([name, m]) =>
@@ -418,7 +428,7 @@
 
   if (!MODEL || !M || !window.RiskChart) {
     document.body.insertAdjacentHTML("afterbegin", '<p class="wrap" style="padding-block:16px">The model files are missing. ' +
-      "Open the app from the <code>app/</code> folder with all its files, or regenerate them with notebook 02.</p>");
+      "Open the app from the <code>app/</code> folder with all its files, or regenerate them with notebook 04.</p>");
     return;
   }
   if (String(MODEL.dataset.schema_version).split(".")[0] !== "1") {

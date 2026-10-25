@@ -29,8 +29,9 @@ OpenPowerlifting bulk CSV (Public Domain)
 data/processed/deadlift3_attempts.{parquet,csv} + metadata.json
         │  contract: specs/04 + dataset_schema.json, checked by scripts/validate_dataset.py
         ▼
-notebooks/02_model_training.ipynb   ← specs 06, 07  (fit on train, choose on validation)
-        │  app/model/model.json (model card)
+notebooks/02_model_training.ipynb   ← specs 06, 07  model v1 → app/model/model_v1.json (baseline)
+notebooks/04_model_v2.ipynb         ← specs 07, 08  model v2 (D-19–D-21) → app/model/model.json (model card)
+        │  fit on train, choose on validation; v2 compared once on the 2026 hold-out
         ▼
 app/  Third Attempt Planner, static HTML + JS   ← spec 08
 ```

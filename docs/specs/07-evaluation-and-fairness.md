@@ -79,7 +79,7 @@ silently adding `sex` back as a threshold input.
 
 ## Final test evaluation (run once, decision D-17)
 
-1. Freeze: the committed `app/model/model.json` is the model (monotone logistic regression fitted on train) with its
+1. Freeze: the committed `app/model/model.json` (since D-21: `model_v1.json`) is the model (monotone logistic regression fitted on train) with its
    validation threshold 0.3541 (0.35 in the report). Do not change features, model or threshold afterwards.
 2. Use the data snapshot the model was trained on (`opl_commit` in the model card) and the exported `split` column –
    no re-split, no refit on validation or test.
@@ -101,9 +101,9 @@ silently adding `sex` back as a threshold input.
 
 Test agrees with validation within 0.01 everywhere. Segments: men recall 0.79 vs women 0.49 (precision 0.48 / 0.48),
 Sub-Juniors 0.60, Masters 0.61, Single-ply 0.86, Multi-ply 0.90; Mx (36 rows, 6 failures) and Unlimited too small.
-Full table: `app/model/model.json` → `segments_test`.
+Full table: `app/model/model_v1.json` → `segments_test`.
 
-## Model v2 and the 2026 time hold-out (decisions D-19, D-20)
+## Model v2 and the 2026 time hold-out (decisions D-19 – D-21)
 
 `notebooks/04_model_v2.ipynb`, card `models/model_v2_card.json`. Gradient boosting, monotone in the planned weight,
 with DL1 weight/result, jump DL1→DL2 and number of earlier meets as extra inputs; chosen on validation only.
@@ -114,6 +114,10 @@ with DL1 weight/result, jump DL1→DL2 and number of earlier meets as extra inpu
 | **v2 gradient boosting** | **0.49 / 0.70 / 0.57** | **0.50 / 0.72 / 0.58** |
 
 Validation segments for v2: recall women 0.54 (v1 0.49), men 0.77 (v1 0.79) – the gap shrinks from 30 to 22 points.
+
+Numbers of the deployed v2 (features rounded to 9 decimals, threshold 0.349, D-21; the app runs this variant).
+Before rounding the hold-out gave 0.5002 / 0.7192 / 0.5821, after 0.4996 / 0.7190 / 0.5819 – equal at two decimals.
+App card: `app/model/model.json`; selection and both hold-out runs: `models/model_v2_card.json`.
 
 ## Reporting checklist
 

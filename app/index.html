@@ -50,6 +50,21 @@
         <legend>Deadlift so far</legend>
         <div class="row">
           <div class="field">
+            <label for="dl1_weight_kg">1st attempt</label>
+            <div class="input-unit"><input id="dl1_weight_kg" name="dl1_weight_kg" type="number" inputmode="decimal" step="0.5" min="20" max="500" value="215" required><span>kg</span></div>
+            <p class="field__error" id="err-dl1_weight_kg"></p>
+          </div>
+          <div class="field">
+            <span class="label" id="dl1-result-label">Result</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="dl1-result-label">
+              <input type="radio" id="dl1-good" name="dl1_success" value="1" checked><label for="dl1-good">Good lift</label>
+              <input type="radio" id="dl1-miss" name="dl1_success" value="0"><label for="dl1-miss">No lift</label>
+            </div>
+            <p class="field__error" id="err-dl1_success"></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
             <label for="dl2_weight_kg">2nd attempt</label>
             <div class="input-unit"><input id="dl2_weight_kg" name="dl2_weight_kg" type="number" inputmode="decimal" step="0.5" min="20" max="500" value="230" required><span>kg</span></div>
             <p class="field__error" id="err-dl2_weight_kg"></p>
@@ -105,6 +120,12 @@
             <select id="age_class_group" name="age_class_group"></select>
             <p class="field__error" id="err-age_class_group"></p>
           </div>
+        </div>
+        <div class="field">
+          <label for="prev_meets_count">Earlier competitions</label>
+          <div class="input-unit"><input id="prev_meets_count" name="prev_meets_count" type="number" inputmode="numeric" step="1" min="0" max="1000" value="3" required><span>meets</span></div>
+          <p class="field__hint">Any discipline, before today. 0 for a first competition.</p>
+          <p class="field__error" id="err-prev_meets_count"></p>
         </div>
       </fieldset>
 
@@ -203,7 +224,7 @@
       <textarea id="csv-fallback" class="csv-fallback" rows="5" readonly hidden aria-label="Decision log as CSV"></textarea>
       <div class="table-scroll">
         <table class="log-table" id="log-table">
-          <thead><tr><th scope="col">Logged</th><th scope="col">2nd</th><th scope="col">Suggested</th><th scope="col">Declared</th><th scope="col">Risk</th><th scope="col">Outcome</th></tr></thead>
+          <thead><tr><th scope="col">Logged</th><th scope="col">1st · 2nd</th><th scope="col">Suggested</th><th scope="col">Declared</th><th scope="col">Risk</th><th scope="col">Outcome</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>

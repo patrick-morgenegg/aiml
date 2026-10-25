@@ -9,7 +9,8 @@ project report; precise specs are in `docs/` (start at `docs/README.md`).
 - Data pipeline: `notebooks/01_data_extraction_and_cleaning.ipynb` (all parameters in its `parameters` cell)
 - Dataset contract: `docs/specs/dataset_schema.json` + `docs/specs/04-dataset-contract.md`
 - Contract check: `python scripts/validate_dataset.py <file> [--metadata data/processed/metadata.json]`
-- Model training + export: `notebooks/02_model_training.ipynb` → `app/model/model.json` (generated, never hand-edit)
+- Model v1 (baseline): `notebooks/02_model_training.ipynb` → `app/model/model_v1.json`
+- Model v2 (in the app, D-21): `notebooks/04_model_v2.ipynb` → `app/model/model.json` + `model-data.js` (generated, never hand-edit)
 - App: `app/` (static HTML + JS, see `app/README.md`); requirements: `docs/specs/08-app-integration.md`
 - Tests: `node --test "app/tests/*.test.js"`
 - Why things are the way they are: `docs/decisions.md`

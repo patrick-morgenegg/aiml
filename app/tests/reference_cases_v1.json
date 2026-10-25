@@ -1,0 +1,565 @@
+{
+ "model_version": "monotone-logreg-v1",
+ "cases": [
+  {
+   "context": {
+    "dl2_weight_kg": 140.0,
+    "dl2_success": false,
+    "bodyweight_kg": 62.9,
+    "age_class_group": "Sub-Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 147.5,
+    "best_bench_kg": 95.0,
+    "prev_best_deadlift_kg": 137.5
+   },
+   "planned_kg": 157.5,
+   "p_fail": 0.6199345384969572
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 245.0,
+    "dl2_success": true,
+    "bodyweight_kg": 111.3,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 175.0,
+    "best_bench_kg": 140.0,
+    "prev_best_deadlift_kg": 245.0
+   },
+   "planned_kg": 289.0,
+   "p_fail": 0.7108712721665499
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 265.0,
+    "dl2_success": true,
+    "bodyweight_kg": 132.9,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 220.0,
+    "best_bench_kg": 150.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 306.1,
+   "p_fail": 0.5153779117872179
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 107.5,
+    "dl2_success": true,
+    "bodyweight_kg": 49.3,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 95.0,
+    "best_bench_kg": 60.0,
+    "prev_best_deadlift_kg": 100.0
+   },
+   "planned_kg": 112.3,
+   "p_fail": 0.2554991888127815
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 135.0,
+    "dl2_success": true,
+    "bodyweight_kg": 96.25,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 130.0,
+    "best_bench_kg": 70.0,
+    "prev_best_deadlift_kg": 160.0
+   },
+   "planned_kg": 143.1,
+   "p_fail": 0.19685779703286355
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 102.5,
+    "dl2_success": true,
+    "bodyweight_kg": 74.9,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 72.5,
+    "best_bench_kg": 45.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 120.4,
+   "p_fail": 0.34856350718875617
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 197.5,
+    "dl2_success": true,
+    "bodyweight_kg": 128.4,
+    "age_class_group": "Masters",
+    "equipment": "Wraps",
+    "best_squat_kg": 220.0,
+    "best_bench_kg": 107.5,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 198.0,
+   "p_fail": 0.27087936457930123
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 240.0,
+    "dl2_success": true,
+    "bodyweight_kg": 81.75,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 217.5,
+    "best_bench_kg": 140.0,
+    "prev_best_deadlift_kg": 250.0
+   },
+   "planned_kg": 279.4,
+   "p_fail": 0.6636057844634191
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 265.0,
+    "dl2_success": true,
+    "bodyweight_kg": 108.7,
+    "age_class_group": "Open",
+    "equipment": "Wraps",
+    "best_squat_kg": 220.0,
+    "best_bench_kg": 145.0,
+    "prev_best_deadlift_kg": 265.0
+   },
+   "planned_kg": 307.2,
+   "p_fail": 0.7277768567019152
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 265.0,
+    "dl2_success": true,
+    "bodyweight_kg": 108.9,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 230.0,
+    "best_bench_kg": 172.5,
+    "prev_best_deadlift_kg": 305.0
+   },
+   "planned_kg": 289.8,
+   "p_fail": 0.4257611257316101
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 212.5,
+    "dl2_success": true,
+    "bodyweight_kg": 87.6,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 155.0,
+    "best_bench_kg": 87.5,
+    "prev_best_deadlift_kg": 222.5
+   },
+   "planned_kg": 225.4,
+   "p_fail": 0.48295391276682154
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 182.5,
+    "dl2_success": true,
+    "bodyweight_kg": 104.3,
+    "age_class_group": "Open",
+    "equipment": "Single-ply",
+    "best_squat_kg": 227.5,
+    "best_bench_kg": 165.0,
+    "prev_best_deadlift_kg": 102.06
+   },
+   "planned_kg": 192.7,
+   "p_fail": 0.32511453120194234
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 280.0,
+    "dl2_success": false,
+    "bodyweight_kg": 89.2,
+    "age_class_group": "Junior",
+    "equipment": "Single-ply",
+    "best_squat_kg": 280.0,
+    "best_bench_kg": 210.0,
+    "prev_best_deadlift_kg": 280.0
+   },
+   "planned_kg": 294.3,
+   "p_fail": 0.7654953763194834
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 67.5,
+    "dl2_success": true,
+    "bodyweight_kg": 48.26,
+    "age_class_group": "Sub-Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 45.0,
+    "best_bench_kg": 25.0,
+    "prev_best_deadlift_kg": 72.5
+   },
+   "planned_kg": 73.5,
+   "p_fail": 0.20931179488701843
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 325.0,
+    "dl2_success": true,
+    "bodyweight_kg": 104.7,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 285.0,
+    "best_bench_kg": 187.5,
+    "prev_best_deadlift_kg": 330.0
+   },
+   "planned_kg": 357.8,
+   "p_fail": 0.6281968091804799
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 177.5,
+    "dl2_success": true,
+    "bodyweight_kg": 72.44,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 152.5,
+    "best_bench_kg": 110.0,
+    "prev_best_deadlift_kg": 195.0
+   },
+   "planned_kg": 197.1,
+   "p_fail": 0.4010378209391403
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 225.0,
+    "dl2_success": true,
+    "bodyweight_kg": 89.91,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 165.0,
+    "best_bench_kg": 135.0,
+    "prev_best_deadlift_kg": 237.5
+   },
+   "planned_kg": 269.8,
+   "p_fail": 0.7009173917629951
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 137.5,
+    "dl2_success": true,
+    "bodyweight_kg": 66.0,
+    "age_class_group": "Sub-Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 115.0,
+    "best_bench_kg": 80.0,
+    "prev_best_deadlift_kg": 137.5
+   },
+   "planned_kg": 159.3,
+   "p_fail": 0.49530528701199256
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 175.0,
+    "dl2_success": true,
+    "bodyweight_kg": 91.45,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 170.0,
+    "best_bench_kg": 80.0,
+    "prev_best_deadlift_kg": 182.5
+   },
+   "planned_kg": 196.8,
+   "p_fail": 0.4815777087967675
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 215.0,
+    "dl2_success": true,
+    "bodyweight_kg": 80.65,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 190.0,
+    "best_bench_kg": 125.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 257.5,
+   "p_fail": 0.5818501970338321
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 170.0,
+    "dl2_success": true,
+    "bodyweight_kg": 140.4,
+    "age_class_group": "Masters",
+    "equipment": "Raw",
+    "best_squat_kg": 112.5,
+    "best_bench_kg": 122.5,
+    "prev_best_deadlift_kg": 177.5
+   },
+   "planned_kg": 177.3,
+   "p_fail": 0.20922216622346784
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 220.0,
+    "dl2_success": true,
+    "bodyweight_kg": 89.4,
+    "age_class_group": "Masters",
+    "equipment": "Wraps",
+    "best_squat_kg": 225.0,
+    "best_bench_kg": 170.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 227.0,
+   "p_fail": 0.29483405987984485
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 120.0,
+    "dl2_success": false,
+    "bodyweight_kg": 59.5,
+    "age_class_group": "Junior",
+    "equipment": "Wraps",
+    "best_squat_kg": 87.5,
+    "best_bench_kg": 75.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 134.7,
+   "p_fail": 0.5312659616603483
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 210.0,
+    "dl2_success": true,
+    "bodyweight_kg": 74.76,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 165.0,
+    "best_bench_kg": 125.0,
+    "prev_best_deadlift_kg": 212.5
+   },
+   "planned_kg": 211.8,
+   "p_fail": 0.40716183446826265
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 235.0,
+    "dl2_success": true,
+    "bodyweight_kg": 73.96,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 217.5,
+    "best_bench_kg": 157.5,
+    "prev_best_deadlift_kg": 245.0
+   },
+   "planned_kg": 236.7,
+   "p_fail": 0.4010698528281247
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 205.0,
+    "dl2_success": true,
+    "bodyweight_kg": 78.6,
+    "age_class_group": "Unknown",
+    "equipment": "Raw",
+    "best_squat_kg": 182.5,
+    "best_bench_kg": 90.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 226.1,
+   "p_fail": 0.4712805248328971
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 235.0,
+    "dl2_success": true,
+    "bodyweight_kg": 82.5,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 187.5,
+    "best_bench_kg": 125.0,
+    "prev_best_deadlift_kg": 235.0
+   },
+   "planned_kg": 256.9,
+   "p_fail": 0.5620050392640882
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 185.0,
+    "dl2_success": true,
+    "bodyweight_kg": 83.0,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 190.0,
+    "best_bench_kg": 105.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 218.9,
+   "p_fail": 0.480835083589617
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 262.5,
+    "dl2_success": true,
+    "bodyweight_kg": 102.5,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 180.0,
+    "best_bench_kg": 160.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 295.5,
+   "p_fail": 0.4987365436466103
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 225.0,
+    "dl2_success": true,
+    "bodyweight_kg": 100.1,
+    "age_class_group": "Unknown",
+    "equipment": "Raw",
+    "best_squat_kg": 205.0,
+    "best_bench_kg": 125.0,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 248.1,
+   "p_fail": 0.4061957672953867
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 205.0,
+    "dl2_success": false,
+    "bodyweight_kg": 82.4,
+    "age_class_group": "Sub-Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 182.5,
+    "best_bench_kg": 130.0,
+    "prev_best_deadlift_kg": 200.0
+   },
+   "planned_kg": 225.4,
+   "p_fail": 0.6955393035210496
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 265.0,
+    "dl2_success": true,
+    "bodyweight_kg": 64.8,
+    "age_class_group": "Open",
+    "equipment": "Raw",
+    "best_squat_kg": 210.0,
+    "best_bench_kg": 122.5,
+    "prev_best_deadlift_kg": 265.5
+   },
+   "planned_kg": 278.1,
+   "p_fail": 0.6127950818241635
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 180.0,
+    "dl2_success": true,
+    "bodyweight_kg": 65.5,
+    "age_class_group": "Open",
+    "equipment": "Wraps",
+    "best_squat_kg": 180.0,
+    "best_bench_kg": 92.5,
+    "prev_best_deadlift_kg": 195.0
+   },
+   "planned_kg": 180.5,
+   "p_fail": 0.39679028607526184
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 265.0,
+    "dl2_success": false,
+    "bodyweight_kg": 95.8,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 220.0,
+    "best_bench_kg": 120.0,
+    "prev_best_deadlift_kg": 270.0
+   },
+   "planned_kg": 275.2,
+   "p_fail": 0.7460171812866156
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 240.0,
+    "dl2_success": true,
+    "bodyweight_kg": 99.4,
+    "age_class_group": "Open",
+    "equipment": "Single-ply",
+    "best_squat_kg": 240.0,
+    "best_bench_kg": 200.0,
+    "prev_best_deadlift_kg": 260.0
+   },
+   "planned_kg": 273.2,
+   "p_fail": 0.5597327973836335
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 240.0,
+    "dl2_success": false,
+    "bodyweight_kg": 90.4,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 177.5,
+    "best_bench_kg": 122.5,
+    "prev_best_deadlift_kg": null
+   },
+   "planned_kg": 249.6,
+   "p_fail": 0.6346702068693146
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 80.0,
+    "dl2_success": true,
+    "bodyweight_kg": 57.75,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 72.5,
+    "best_bench_kg": 42.5,
+    "prev_best_deadlift_kg": 75.0
+   },
+   "planned_kg": 85.9,
+   "p_fail": 0.17919486283254032
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 145.0,
+    "dl2_success": true,
+    "bodyweight_kg": 60.0,
+    "age_class_group": "Open",
+    "equipment": "Single-ply",
+    "best_squat_kg": 145.0,
+    "best_bench_kg": 85.0,
+    "prev_best_deadlift_kg": 155.0
+   },
+   "planned_kg": 145.5,
+   "p_fail": 0.3672638617008207
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 175.0,
+    "dl2_success": true,
+    "bodyweight_kg": 72.0,
+    "age_class_group": "Junior",
+    "equipment": "Raw",
+    "best_squat_kg": 147.5,
+    "best_bench_kg": 90.0,
+    "prev_best_deadlift_kg": 190.0
+   },
+   "planned_kg": 204.1,
+   "p_fail": 0.5665520981838417
+  },
+  {
+   "context": {
+    "dl2_weight_kg": 130.0,
+    "dl2_success": true,
+    "bodyweight_kg": 69.05,
+    "age_class_group": "Open",
+    "equipment": "Wraps",
+    "best_squat_kg": 132.5,
+    "best_bench_kg": 52.5,
+    "prev_best_deadlift_kg": 122.5
+   },
+   "planned_kg": 134.0,
+   "p_fail": 0.3601112453879342
+  }
+ ]
+}

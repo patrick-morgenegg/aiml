@@ -41,16 +41,16 @@ Model (validation split): PR-AUC 0.55 vs. 0.39 base rate and 0.43 for "fails if 
 70 % of failed attempts caught at 48 % precision; well calibrated; risk constrained to rise with weight.
 Test split (evaluated once, 2026-10-10): precision 0.48, recall 0.70, PR-AUC 0.55 – same as validation.
 Model v2 (gradient boosting, notebook 04, D-20): 2026 hold-out precision 0.50, recall 0.72, PR-AUC 0.58 vs. v1 0.49 / 0.72 / 0.56.
-The app still runs v1.
+The app runs v2 since D-21 (v1 stays in the repository as the tested baseline).
 Details: [docs/specs/07-evaluation-and-fairness.md](docs/specs/07-evaluation-and-fairness.md).
 
 ## Repository layout
 
 ```
 notebooks/01_data_extraction_and_cleaning.ipynb   extract → clean → features → pseudonymise → split → export
-notebooks/02_model_training.ipynb                  monotone logistic regression → app/model/model.json
+notebooks/02_model_training.ipynb                  model v1, monotone logistic regression → app/model/model_v1.json
 notebooks/03_confusion_matrix.ipynb                confusion matrix of the frozen model on test → docs/figures/
-notebooks/04_model_v2.ipynb                        model v2 (gradient boosting) + 2026 time hold-out → models/
+notebooks/04_model_v2.ipynb                        model v2 (gradient boosting) + 2026 hold-out → app/model/model.json
 app/                                               Third Attempt Planner (static HTML + JS, works from disk)
 scripts/validate_dataset.py                        checks any export against the dataset contract
 data/raw/                                          downloaded OpenPowerlifting zip (git-ignored)
