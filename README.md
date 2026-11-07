@@ -1,8 +1,10 @@
+
 # Third Attempt Planner – risk of failing the 3rd deadlift attempt
 
 [![CI](https://github.com/patrick-morgenegg/aiml/actions/workflows/ci.yml/badge.svg)](https://github.com/patrick-morgenegg/aiml/actions/workflows/ci.yml)
 ![App: static HTML + JS](https://img.shields.io/badge/app-static%20HTML%20%2B%20JS-1f5fbf)
 ![Data: OpenPowerlifting](https://img.shields.io/badge/data-OpenPowerlifting-c62828)
+
 
 After the 2nd deadlift attempt a coach must declare the weight of the 3rd. This project estimates the
 probability that the 3rd attempt **fails** for a planned weight (binary classification), using public
