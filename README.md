@@ -1,6 +1,6 @@
 # AIML project – risk of failing the 3rd deadlift attempt
 
-Patrick Morgenegg, Niklas Grün · Module KETE (Prof. Dr. U. Michelucci)
+Patrick Morgenegg, Niklas Grün · Module AIML (Prof. Dr. U. Michelucci)
 
 After the 2nd deadlift attempt a coach must declare the weight of the 3rd. This project estimates the
 probability that the 3rd attempt **fails** for a planned weight (binary classification), using public
