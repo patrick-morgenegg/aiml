@@ -1,4 +1,4 @@
-# KETE AI/ML project – risk of failing the 3rd deadlift attempt
+# AIML project – risk of failing the 3rd deadlift attempt
 
 Patrick Morgenegg, Niklas Grün · Module KETE (Prof. Dr. U. Michelucci)
 
