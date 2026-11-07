@@ -19,3 +19,7 @@ data/processed/*
 .DS_Store
 .idea/
 .vscode/
+
+# Node (Playwright for scripts/capture_screenshots.mjs)
+node_modules/
+package-lock.json
