@@ -5,6 +5,13 @@ the app shows the predicted failure risk for every allowed 3rd-attempt weight an
 that stays within your risk limit**, with the IPF plate loading for it. Everything runs in the browser – no
 server, no account, nothing leaves the device.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../docs/screenshots/planner-dark.png">
+  <img src="../docs/screenshots/planner-light.png" alt="Third Attempt Planner: the form for the situation after the 2nd attempt on the left; on the right the suggested 3rd attempt of 247.5 kg at 45 % failure risk, the failure-risk curve and the table of allowed weights." width="800">
+</picture>
+
+More screenshots are in the [project README](../README.md#what-the-app-does).
+
 ## Open it
 
 * Double-click `index.html` (works from disk), or
